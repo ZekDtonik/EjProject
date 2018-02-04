@@ -1,0 +1,35 @@
+
+    Options -Indexes
+
+
+    RewriteEngine On
+    RewriteBase /
+    RewriteCond %{SCRIPT_FILENAME} !-f [OR]
+    RewriteCond %{SCRIPT_FILENAME} !-d
+    #REGRAS DE REESCRITA
+    RewriteRule ^(autenticar|login)+/?$ index.php?instruction=authenticate [NC,L]
+    RewriteRule ^(sessao-expirada)+/?$ index.php?instruction=Sessao-Expirada [NC,L]
+    RewriteRule ^(administrador|administracao)+/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/? admin.php?mainAction=$2&subAction=$3&lastAction=$4 [NC,QSA,L]
+    RewriteRule ^(functionario|empregados)+/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?$ funcionario.php?mainAction=$2&subAction=$3 [NC,QSA,L]
+
+
+#COMPACTAÇÃO GZIP, aumenta a velocidade de carregamento da página
+<ifModule mod_deflate.c>
+    # mod_deflate configuration
+    SetOutputFilter DEFLATE
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-font-woff
+    AddOutputFilterByType DEFLATE image/png image/jpeg image/jpg
+    # Netscape 4.x has some problems.
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    # Netscape 4.06-4.08 have some more problems
+    BrowserMatch ^Mozilla/4.0[678] no-gzip
+    # MSIE masquerades as Netscape, but it is fine
+    BrowserMatch bMSI[E] !no-gzip !gzip-only-text/html
+    </ifModule>

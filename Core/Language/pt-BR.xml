@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<language country="BR" lang="pt">
+    <author>Kevin Marques</author>
+    <version>1.0.0</version>
+    <Titles>
+        <home>Página Inicial</home>
+        <category>Categorias</category>
+        <admin>Administração</admin>
+    </Titles>
+    <Errors>
+        <all_fields_need_to_be_filled>Todos os campos devem ser preenchidos!</all_fields_need_to_be_filled>
+        <field_cannot_empty>Os campos não podem ficar em branco</field_cannot_empty>
+        <wrong_login>Login e\ou Senha Incorretos!</wrong_login>
+        <characters_in_field_name_invalid>Caracteres existentes do campo nome são inválidos!</characters_in_field_name_invalid>
+        <login_name_must_be_between>Nome de login deve estar entre %s e %s caracteres.</login_name_must_be_between>
+        <login_name_invalid>Nome de login inválido</login_name_invalid>
+        <login_name_already_exist>Nome de login inserido já existe.</login_name_already_exist>
+        <email_name_invalid>Endereço de email inválido.</email_name_invalid>
+        <email_already_exist>Endereço de email já existe.</email_already_exist>
+        <cpf_number_invalid>Número de C.P.F inválido.</cpf_number_invalid>
+        <cpf_already_exist>Este C.P.F já existe.</cpf_already_exist>
+        <rg_field_only_accept_numbers>Campo de R.G aceita apenas caracteres numéricos</rg_field_only_accept_numbers>
+        <password_length_must_be_between>Tamanho da senha deve estar entre %s e %s caracteres.</password_length_must_be_between>
+        <matriculation_id_already_exist>Este identificador de matrícula já existe.</matriculation_id_already_exist>
+        <ctps_field_only_accept_numbers>Campo de CPTS aceita apenas caracteres numéricos.</ctps_field_only_accept_numbers>
+        <phone_invalid>Telefone inserido inválido</phone_invalid>
+        <alternative_phone_invalid>Telefone alternativo inserido inválido</alternative_phone_invalid>
+
+        <field_cannot_be_empty>Campos não podem ficar em branco.</field_cannot_be_empty>
+        <category_already_exist>O nome da categoria inserida ja existe!</category_already_exist>
+        <category_name_invalid>Nome da categoria inserida é inválida!</category_name_invalid>
+
+    </Errors>
+    <Texts>
+        <category>Categoria</category>
+        <register>Cadastro</register>
+        <report>Relatório</report>
+        <send>Enviar</send>
+        <error>Erro! </error>
+        <success>Sucesso! </success>
+        <welcome>Bem-Vindo! </welcome>
+        <warning>Aviso! </warning>
+        <message>Mensagem</message>
+        <document>Documento</document>
+        <system_access>Acesso ao Sistema</system_access>
+        <employee>Funcionário</employee>
+        <employees>Funcionários</employees>
+        <admin>Administrador</admin>
+        <exit>Sair</exit>
+        <code>Código</code>
+        <fatal>Erro Fatal!</fatal>
+        <more_info>Mais informações</more_info>
+        <name>Nome</name>
+        <enroller>Matrícula</enroller>
+        <email>E-mail</email>
+        <account>Conta</account>
+        <rg>RG</rg>
+        <login>Login</login>
+        <password>Senha</password>
+        <clear>Limpar</clear>
+        <save>Salvar</save>
+        <delete>Apagar</delete>
+        <bank>Banco</bank>
+        <agency>Agência</agency>
+        <work_wallet>Carteira de Trabalho</work_wallet>
+        <operation>Operação</operation>
+    </Texts>
+    <Infos>
+        <internal_server_error>Erro interno do servidor.</internal_server_error>
+        <success_login>Login realizado com sucesso.</success_login>
+        <blocked_account>Sua conta foi bloqueada pelo Adminsitrador!</blocked_account>
+        <session_expired>Sessão expirada, faça o login novamente!</session_expired>
+        <employee_successful_added>Funcionário adicionado com sucesso!</employee_successful_added>
+        <category_successful_added>Categoria adicionada com sucesso!</category_successful_added>
+        <error_on_procedure>Erro de execução no procedimento remoto!</error_on_procedure>
+    </Infos>
+</language>

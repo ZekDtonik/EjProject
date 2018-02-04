@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="84339171-1eb7-4d6e-a709-2e8e53e9e143" name="EJ Project  Sync" url="http://www.ejp.com">
+        <fileTransfer port="0" mountedRoot="W:\WWW\EJProject" accessType="MOUNT" />
+      </webServer>
+    </option>
+  </component>
+</project>
