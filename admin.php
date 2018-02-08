@@ -37,11 +37,18 @@ $Administration = new Administrator();
             switch ($_GET[_subAction]){
                 //caso seja documento (anexo)
                 case _doc:
-
+                    if($_GET[_lastAction] == _make){
+                        $Administration->enviarMsgs(true);
+                    }
+                    $Administration->ui_send_messages(true);
                     break;
                 //caso seja mensagem (texto sem anexo)
                 default:
+                    if($_GET[_lastAction] == _make){
 
+                        $Administration->enviarMsgs();
+                    }
+                    $Administration->ui_send_messages();
                     break;
             }
             break;
@@ -61,11 +68,23 @@ $Administration = new Administrator();
             break;
         case _category:
             switch ($_GET[_subAction]){
-
-                default:
-                    if($_GET[_lastAction]){
-
+                case _edit:
+                    if($_GET[_endAction] == _make){
+                        $Administration->editarCategoria();
                     }
+                    $Administration->ui_visualize_category('edit');
+                    break;
+                case _remove:
+                    if($_GET[_endAction] == _make){
+                        $Administration->removercategoria();
+                    }
+                    $Administration->ui_remove_category();
+                    break;
+                default:
+                    if($_GET[_lastAction] == _make){
+                        $Administration->cadastrarCategoria();
+                    }
+                    $Administration->ui_visualize_category();
                     break;
             }
             break;

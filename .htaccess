@@ -9,8 +9,8 @@
     #REGRAS DE REESCRITA
     RewriteRule ^(autenticar|login)+/?$ index.php?instruction=authenticate [NC,L]
     RewriteRule ^(sessao-expirada)+/?$ index.php?instruction=Sessao-Expirada [NC,L]
-    RewriteRule ^(administrador|administracao)+/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/? admin.php?mainAction=$2&subAction=$3&lastAction=$4 [NC,QSA,L]
-    RewriteRule ^(functionario|empregados)+/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?$ funcionario.php?mainAction=$2&subAction=$3 [NC,QSA,L]
+    RewriteRule ^(administrador|administracao)+/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/? admin.php?mainAction=$2&subAction=$3&lastAction=$4&endAction=$5 [NC,QSA,L]
+    RewriteRule ^(funcionario|empregados)+/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/?([a-zA-Z0-9_\-.+]*)/? funcionario.php?mainAction=$2&subAction=$3&lastAction=$4&endAction=$5 [NC,QSA,L]
 
 
 #COMPACTAÇÃO GZIP, aumenta a velocidade de carregamento da página

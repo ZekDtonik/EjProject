@@ -59,10 +59,28 @@ class Kernel
                 break;
             //Observando Internos
             default:
-                Modules\Authenticate::checkSession();
+                Modules\Authenticate::checkSession('inner',$getPlace);
                 break;
         }
-
-
+    }
+    public function setMainFolder(){
+        if(!file_exists(DOCPATH)){
+            mkdir(DOCPATH,0777);
+        }
+        else{
+            if(!is_writable(DOCPATH)){
+                chmod(DOCPATH,0777);
+            }
+        }
+    }
+    public static function getFormatedDate($dateUniversal){
+        if(empty($dateUniversal)){
+            return "Valor de data não inserida";
+        }
+        else{
+            $date = new DateTime($dateUniversal);
+            $formated = $date->format("d-m-Y - h:i");
+            return $formated.'h';
+        }
     }
 }

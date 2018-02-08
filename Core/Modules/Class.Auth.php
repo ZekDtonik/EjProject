@@ -472,7 +472,7 @@ class Auth
         if (empty($adr)) {
             return false;
         } else {
-            if (!preg_match("/^([a-z0-9 á-úà-ùãõâ-ûçä-ü\.\?\!\,\%@\/\[\]\(\)\;]+)$/i", $adr)) {
+            if (!preg_match("/^([a-z0-9 á-úà-ùãõâ-ûçä-ü\.\?\!\,\%@\/\[\]\(\)\;\:]+)$/i", $adr)) {
                 return false;
             }
             return true;
@@ -500,7 +500,17 @@ class Auth
             return true;
         }
     }
+    public static function isNatural($text){
+        if (empty($text)) {
+            return false;
+        } else {
+            if (!preg_match("/^([a-z0-9 á-úà-ùãõâ-ûçä-ü\.\-\_,\?\!\$%&\*\:]+)$/i", $text)) {
+                return false;
+            }
 
+            return true;
+        }
+    }
     /** Função que verifica uma string ou valor passado de email
      *
      * @var string $email valor a ser testado
@@ -522,6 +532,15 @@ class Auth
         if (empty($login)) {
             return false;
         } elseif (!preg_match("/^[a-z0-9\.\_]+$/i", $login)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    public static function isColor($color){
+        if (empty($color)) {
+            return false;
+        } elseif (!preg_match("/^#([a-z0-9]{6})$/i", $color)) {
             return false;
         } else {
             return true;
@@ -582,7 +601,7 @@ class Auth
     }
     public static function randomColor(){
         $pattern = "ABCDEF0123456789";
-        return "#".substr(str_shuffle($pattern),0,1).substr(str_shuffle($pattern),0,1).substr(str_shuffle($pattern),0,1);
+        return "#".substr(str_shuffle($pattern),0,1).substr(str_shuffle($pattern),0,1).substr(str_shuffle($pattern),0,1).substr(str_shuffle($pattern),0,1).substr(str_shuffle($pattern),0,1).substr(str_shuffle($pattern),0,1);
 
     }
 }

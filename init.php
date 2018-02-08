@@ -34,7 +34,7 @@ switch ($WorkPlace){
     default:
         //INFORMAÇÕES DE BANCO DE DADOS!
         $userName = "root";
-        $passwd = "usbw";
+        $passwd = "";
         $dataBaseName = "ejdb";
         $hostName = "127.0.0.1";
         $hostPort = 3306;//ATENÇÃO: APLICAÇÃO DE PORTA INCORRETA, ACARRETA EM TRAVAMENTO DO SERVIDOR
@@ -42,14 +42,23 @@ switch ($WorkPlace){
         break;
 }
 
+//EXTENÇÕES ACEITAS PARA ENVIO DE ARQUIVOS
+$docPattern = array("image/jpeg","image/png","image/jpg","image/bmp","application/msword","application/pdf","application/zip","text/plain","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/excel");
+define("default_document_patten",$docPattern);
 
 //Nao alterar dependências
 //================================//
 require "Core/Definitions.php";
 //=================================//
+//Define informações de Pasta de Documentos
+define("MAIN_PATH",__DIR__);
+define("DOCFOLDER","documentos");
+define("DOCPATH",MAIN_PATH.DS.DOCFOLDER.DS);
+//=================================//
 //AUTO LOAD MÓDULOS
 $Kernel = new Kernel();
 $Kernel->checkClientStatus();
+$Kernel->setMainFolder();
 //INSTANCIAS DE CLASSE VEM APOIS A INSTANCIA DO KERNEL
 function _tr($module = null){
 

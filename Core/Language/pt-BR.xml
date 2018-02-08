@@ -25,13 +25,21 @@
         <ctps_field_only_accept_numbers>Campo de CPTS aceita apenas caracteres numéricos.</ctps_field_only_accept_numbers>
         <phone_invalid>Telefone inserido inválido</phone_invalid>
         <alternative_phone_invalid>Telefone alternativo inserido inválido</alternative_phone_invalid>
-
         <field_cannot_be_empty>Campos não podem ficar em branco.</field_cannot_be_empty>
         <category_already_exist>O nome da categoria inserida ja existe!</category_already_exist>
         <category_name_invalid>Nome da categoria inserida é inválida!</category_name_invalid>
-
+        <color_hex_pattern_not_detected>Padrão de cor especificado não é válido</color_hex_pattern_not_detected>
+        <title_inserted_invalid>Título inserido contem caracteres inválidos.</title_inserted_invalid>
+        <file_type_not_accept>Tipo de arquivo especificado não é válido.</file_type_not_accept>
+        <impossible_complete_send_message_action>Impossível realizar açao de envio de mensagem.</impossible_complete_send_message_action>
+        <file_save_but_message_not_sended>O documento no formulario foi salvo no servidor, mas a mensagem não foi enviada!</file_save_but_message_not_sended>
+        <message_sended_but_file_not_uploaded>Mensagem enviada, contudo, o documento não foi salvo no servidor de arquivos!</message_sended_but_file_not_uploaded>
+        <document_not_annexed>O documento requerido não foi anexado!</document_not_annexed>
+        <error_on_upload_file>Erro no upload do arquivo!</error_on_upload_file>
+        <category_id_not_found>Categoria não encontrada!</category_id_not_found>
     </Errors>
     <Texts>
+        <password>Senha</password>
         <category>Categoria</category>
         <register>Cadastro</register>
         <report>Relatório</report>
@@ -41,7 +49,9 @@
         <welcome>Bem-Vindo! </welcome>
         <warning>Aviso! </warning>
         <message>Mensagem</message>
+        <messages>Mensagens</messages>
         <document>Documento</document>
+        <documents>Documentos</documents>
         <system_access>Acesso ao Sistema</system_access>
         <employee>Funcionário</employee>
         <employees>Funcionários</employees>
@@ -55,6 +65,7 @@
         <email>E-mail</email>
         <account>Conta</account>
         <rg>RG</rg>
+        <cpf>CPF</cpf>
         <login>Login</login>
         <password>Senha</password>
         <clear>Limpar</clear>
@@ -64,14 +75,36 @@
         <agency>Agência</agency>
         <work_wallet>Carteira de Trabalho</work_wallet>
         <operation>Operação</operation>
+        <color>Cor</color>
+        <cancel>Cancelar</cancel>
+        <edit>Editar</edit>
+        <complete>Concluído</complete>
+        <send_message>Enviar Mensagem</send_message>
+        <send_document>Enviar Documento</send_document>
+        <title>Titulo</title>
+        <not_defined>Não definido</not_defined>
+        <all>Todos</all>
+        <comment>Comentário</comment>
+        <not_listed>Não listado</not_listed>
+        <not_categorized>Sem Categoria</not_categorized>
+        <download>Baixar</download>
+        <description>Descrição</description>
+
     </Texts>
     <Infos>
+        <none_employees_registered>Nenhum funcionário cadastrado</none_employees_registered>
         <internal_server_error>Erro interno do servidor.</internal_server_error>
         <success_login>Login realizado com sucesso.</success_login>
         <blocked_account>Sua conta foi bloqueada pelo Adminsitrador!</blocked_account>
         <session_expired>Sessão expirada, faça o login novamente!</session_expired>
         <employee_successful_added>Funcionário adicionado com sucesso!</employee_successful_added>
+        <category_will_be_perm_removed>A categoria %s será permanentemente removida!</category_will_be_perm_removed>
         <category_successful_added>Categoria adicionada com sucesso!</category_successful_added>
+        <category_successful_removed>Categoria removida com sucesso!</category_successful_removed>
+        <category_successful_edited>Categoria editada com sucesso!</category_successful_edited>
+        <itens_with_removed_category_will_be_called_not_categorized>Itens com categorias removidas serão chamadas de "não categorizadas!"</itens_with_removed_category_will_be_called_not_categorized>
         <error_on_procedure>Erro de execução no procedimento remoto!</error_on_procedure>
+        <message_successful_sended>Mensagem enviada com sucesso!</message_successful_sended>
+        <use_key_to_select_multiple_employees>Dica: use %s nos nomes dos funcionários para seleção multipla.</use_key_to_select_multiple_employees>
     </Infos>
 </language>

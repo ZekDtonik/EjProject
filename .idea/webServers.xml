@@ -2,8 +2,11 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="84339171-1eb7-4d6e-a709-2e8e53e9e143" name="EJ Project  Sync" url="http://www.ejp.com">
+      <webServer id="8dd6306b-bc31-45d0-ab9d-893164ed4bea" name="EJProject (project level)" url="http://localhost">
         <fileTransfer port="0" mountedRoot="W:\WWW\EJProject" accessType="MOUNT" />
+      </webServer>
+      <webServer id="2a20e8ee-7d33-4111-9441-d0448b683955" name="Sync to NetBook" url="http://www.ejp.com">
+        <fileTransfer port="0" mountedRoot="W:\EJProject" accessType="MOUNT" />
       </webServer>
     </option>
   </component>

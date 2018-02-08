@@ -584,7 +584,7 @@ class System
     {
         /*Identificador unico do livro*/
         $idb = rand(1000000, 9999999);
-        $catalogDate = Data::setData();
+        //$catalogDate = Data::setData();
         $upd = "undefined";
         /** Upload de imagem caso exista*/
         if (!empty($arrayFile['name'])) {
@@ -592,43 +592,16 @@ class System
             $getExtension = explode('/', $arrayFile['type']);
             $ext = $getExtension[1];
             $fileName = $setRamdomName . '.' . $ext;
-            $place = null;
-            switch ($toLocation) {
-                case 'activity':
-                case 'act':
-                case pg_activities:
-                case ACT_DOCS:
-                    $place = INSTT_DOCS . SIGLA . DIRECTORY_SEPARATOR . ACT_DOCS;
-                break;
-                case 'avatar':
-                case 'avt':
-                case AVATAR_DOCS:
-                    $place = INSTT_DOCS . SIGLA . DIRECTORY_SEPARATOR . AVATAR_DOCS;
-                break;
-                case pg_library:
-                case IMG_LIB:
-                case 'lib':
-                    $place = INSTT_DOCS . SIGLA . DIRECTORY_SEPARATOR . IMG_DOCS . IMG_LIB;
-                break;
-                case 'photos':
-                case 'pht':
-                case IMG_PHT:
-                    $place = INSTT_DOCS . SIGLA . DIRECTORY_SEPARATOR . IMG_DOCS . IMG_PHT;
-                break;
-                default:
-                    $place = $toLocation;
-                break;
-            }
 
             /** verifica se pasta de imagem da biblioteca existe*/
-            if (!file_exists($place)) {
-                mkdir($place, 0777, true);
+            if (!file_exists($toLocation)) {
+                mkdir($toLocation, 0777, true);
             }
-            $moveToPlace = move_uploaded_file($arrayFile["tmp_name"], $place . $fileName);
+            $moveToPlace = move_uploaded_file($arrayFile["tmp_name"], $toLocation . $fileName);
             if ($moveToPlace) {
                 //caso o arquivo tenha sido movido com sucesso, apga o anterior
                 if ($exclude_file != (false or '' or null)) {
-                    unlink($place . $exclude_file);
+                    unlink($toLocation . $exclude_file);
                 }
                 //caso envie com sucesso mostra o nome do arquivo
                 $upd = $fileName;

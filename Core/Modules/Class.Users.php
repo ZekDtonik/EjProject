@@ -7,6 +7,8 @@
 
 namespace Modules;
 
+use Kernel;
+use PDO;
 
 class Users
 {
@@ -90,37 +92,54 @@ class Users
                 <div class=\"col-1\" style=\"height:100%;padding-top:15px;padding-left:0px;padding-right:0px;\">
                    <a  href='".DS._admin.DS._logout."'> <button class=\"btn btn-primary float-right align-self-center\" type=\"button\" style=\"width:90px;height:30;background-color:#728EFD;\">"._tr("Texts")->exit." </button></a>
                 </div>
-                </div>
-                </div>
-                </div>
-                <nav style=\"height:40px;background-color:#007bff;\">
-                    <div class=\"container\" style=\"height:100%;\">
-                        <div class=\"row\">
-                            <div class=\"col\">
-                                <div class=\"btn-group d-flex justify-content-center\" role=\"group\" style=\"width:100%;\">
-                                    <div class=\"dropdown btn-group\" role=\"group\">
-                                        <button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-expanded=\"false\" type=\"button\"
-                                                style=\"width:140px;\">"._tr("Texts")->employee." </button>
-                                        <div class=\"dropdown-menu\" role=\"menu\">
-                                            <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._employee.DS._register."\">"._tr("Texts")->register."</a>
-                                            <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._employee."\">"._tr("Texts")->employees."</a>
-                                        </div>
-                                    </div>
-                                    <a href=\"".DS._admin.DS._category."\"><button class=\"btn btn-primary\" type=\"button\" style=\"width:140px;\">"._tr("Texts")->category."</button></a>
-                                    <div class=\"dropdown btn-group\" role=\"group\">
-                                        <button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-expanded=\"false\" type=\"button\"
-                                                style=\"width:140px;\">"._tr("Texts")->send." </button>
-                                        <div class=\"dropdown-menu\" role=\"menu\">
-                                            <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._send.DS._msg."\">"._tr("Texts")->message."</a>
-                                            <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._send.DS._doc."\">"._tr("Texts")->document."</a>
-                                        </div>
-                                    </div>
-                                    <a href=\"relatorio.html\"><button class=\"btn btn-primary\" type=\"button\" style=\"width:140px;\">"._tr("Texts")->report." </button></a>
-                                </div>
+            </div>
+        </div>
+    </div>";
+        if($_SESSION[sigLvl__] == 1){
+            echo "
+    <nav style=\"height:40px;background-color:#007bff;\">
+        <div class=\"container\" style=\"height:100%;\">
+            <div class=\"row\">
+                <div class=\"col\">
+                    <div class=\"btn-group d-flex justify-content-center\" role=\"group\" style=\"width:100%;\">
+                        <div class=\"dropdown btn-group\" role=\"group\">
+                            <button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-expanded=\"false\" type=\"button\"
+                                    style=\"width:140px;\">"._tr("Texts")->employee." </button>
+                            <div class=\"dropdown-menu\" role=\"menu\">
+                                <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._employee.DS._register."\">"._tr("Texts")->register."</a>
+                                <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._employee."\">"._tr("Texts")->employees."</a>
                             </div>
                         </div>
+                        <a href=\"".DS._admin.DS._category."\"><button class=\"btn btn-primary\" type=\"button\" style=\"width:140px;\">"._tr("Texts")->category."</button></a>
+                        <div class=\"dropdown btn-group\" role=\"group\">
+                            <button class=\"btn btn-primary dropdown-toggle\" data-toggle=\"dropdown\" aria-expanded=\"false\" type=\"button\"
+                                    style=\"width:140px;\">"._tr("Texts")->send." </button>
+                            <div class=\"dropdown-menu\" role=\"menu\">
+                                <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._send.DS._msg."\">"._tr("Texts")->message."</a>
+                                <a class=\"dropdown-item\" role=\"presentation\" href=\"".DS._admin.DS._send.DS._doc."\">"._tr("Texts")->document."</a>
+                            </div>
+                        </div>
+                        <a href=\"relatorio.html\"><button class=\"btn btn-primary\" type=\"button\" style=\"width:140px;\">"._tr("Texts")->report." </button></a>
                     </div>
-                </nav>";
+                </div>
+            </div>
+        </div>
+    </nav>";
+        }
+        else{
+            echo "<nav style=\"height:40px;background-color:#007bff;\">
+        <div class=\"container\" style=\"height:100%;\">
+            <div class=\"row\">
+                <div class=\"col\">
+                    <div class=\"btn-group d-flex justify-content-center\" role=\"group\" style=\"width:100%;\"> 
+                    <a href='".DS._employee.DS._messages."'><button class=\"btn btn-primary\" type=\"button\" style=\"width:140px;\">"._tr("Texts")->messages." </button></a> 
+                    <a href='".DS._employee.DS._documents."'><button class=\"btn btn-primary\" type=\"button\" style=\"width:140px;\">"._tr("Texts")->documents." </button></div></a>
+                </div>
+            </div>
+        </div>
+    </nav>";
+        }
+
     }
     public function ui_back($place){
         echo"<article style=\"margin-top:5px;margin-bottom:15px;\">
@@ -140,7 +159,7 @@ class Users
     public function showInfoUser()
     {
         //Seleciona as informações de usuário recuperando via servidor
-        $getInfo = $this->getSql()->query("SELECT * FROM " . __USERS . " WHERE email=\"" . $_SESSION[sigVar__] . "\"");
+        $getInfo = $this->getSql()->query("SELECT * FROM " . __USERS . " WHERE login=\"" . $_SESSION[sigVar__] . "\"");
         $giveIn = $getInfo->fetch(\PDO::FETCH_ASSOC);
         $name = $giveIn['nome'];
         return "<h6 class=\"text-right\" style=\"color:rgb(255,255,255);\">$name</h6>
@@ -153,6 +172,18 @@ class Users
     public function visualizarMsg()
     {
 
+    }
+    public function downloadSystem($msgId){
+        if(empty($msgId)){
+            return "Message ID not found, Aborted!";
+        }
+        else{
+            //busca o identificador de mensagem
+            $getMessages = $this->getSql()->query("SELECT * FROM ".__MESSAGE." WHERE mid=\"$msgId\" ");
+            $getFetchMsg = $getMessages->fetch(PDO::FETCH_ASSOC);
+            //para fazer o download é necessário estar logado!
+            $getAllusers = json_decode($StreamFetchSource['lista_matricula'],true);
+        }
     }
 
 }
