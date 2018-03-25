@@ -24,6 +24,9 @@ $Administration = new Administrator();
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans">
     <link rel="stylesheet" href="/assets/css/styles.min.css">
     <link rel="stylesheet" href="/assets/css/pagination.css">
+    <link rel="stylesheet" href="/assets/css/extras.css">
+    <noscript><?php \Classes\System::noScript();?></noscript>
+    <!-- TODO: css para no script-->
 </head>
 
 <body>
@@ -32,6 +35,7 @@ $Administration = new Administrator();
     switch ($_GET[_mainAction]){
         //PARA ENVIAR DOCUMENTOS
         case _send:
+
             //Sub ação, observe se os menus possuem subcategorias,
             //caso exista, e necessário adicionar um sub switch
             switch ($_GET[_subAction]){
@@ -66,6 +70,7 @@ $Administration = new Administrator();
                         break;
                 }
             break;
+        ///CATEGORIA
         case _category:
             switch ($_GET[_subAction]){
                 case _edit:
@@ -88,6 +93,15 @@ $Administration = new Administrator();
                     break;
             }
             break;
+        case _report:
+            switch ($_GET[_subAction])
+            {
+
+                default:
+                    $Administration->ui_report();
+                    break;
+            }
+            break;
             //página de saida, o link envia para aqui, e o metodo aplica a saida
         case _logout:
             //logout (true) Redirecionamento ativo apos remoção de sessão
@@ -100,8 +114,13 @@ $Administration = new Administrator();
     }
 
     ?>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>-->
+    <script src="/Core/Js/main.js"></script>
+    <script src="/Core/Js/valid_cadas_func.js"></script>
 </body>
 
 </html>

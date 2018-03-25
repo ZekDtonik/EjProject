@@ -15,7 +15,7 @@ use Interfaces\Employ;
 use Kernel;
 class Administrator extends Users implements Employ
 {
-    private $showMessage;
+
     private $color;
     private $title;
     private $msg;
@@ -39,15 +39,7 @@ class Administrator extends Users implements Employ
     public function getDoc(){return $this->doc;}
     public function getCategory(){return $this->category;}
     //Definição de retorna visual para o usuárop
-    public function setShowMessage($showMessage){$this->showMessage = $showMessage;}
-    public function showMessage($return = false){
-        if ($return){
-            return $this->showMessage;
-        }
-        else {
-            echo $this->showMessage;
-        }
-    }
+
 
     //==============================
     //BACK-END Metodos
@@ -57,6 +49,7 @@ class Administrator extends Users implements Employ
         //insere informações
         //Definindo variaveis de POSTDATA
         try{
+            $permitedExtensionsFile = array("image/bmp","image/jpeg","image/png","image/pjpeg");
             //manipulação de eventos basicos
             $StreamVerifyQuery = $this->getSql()->query("SELECT login, email,matricula,cpf FROM ".__USERS);
             $StreamGetArrayFetch = $StreamVerifyQuery->fetchAll(PDO::FETCH_ASSOC);
@@ -67,6 +60,7 @@ class Administrator extends Users implements Employ
                     $patternConcatOfStream .= $joinPointFormated."-";
                 }
             }
+            //var_dump($_FILES);
             $singleArrayOfData = explode("-",$patternConcatOfStream);
             #Nenhum campo pode ficar em branco.
             if(empty($this->getName()) || empty($this->getLogin()) || empty($this->getPasswd()) || empty($this->getEmail()) || empty($this->getAccount()) || empty($this->getAgency()) || empty($this->getBank()) || empty($this->getMatriculation())|| empty($this->getOperation()) || empty($this->getCtps()) || empty($this->getCpf()) || empty($this->getRg())){
@@ -79,6 +73,9 @@ class Administrator extends Users implements Employ
             #Identificador de matricula ja existe
             else if(in_array($this->getMatriculation(),$singleArrayOfData)){
                 $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->matriculation_id_already_exist." </div>");
+            }
+            else if(strlen($this->getMatriculation()) > 12){
+                $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> ".sprintf(_tr("Errors")->matriculation_id_max_length,12)." </div>");
             }
             #Caracteres inseridos no campo de login são inválidos
             else if(Auth::isLogin($this->getLogin()) == false){
@@ -103,7 +100,6 @@ class Administrator extends Users implements Employ
             #Validaçao de CPF
             else if(Auth::isCpf($this->getCpf()) == false){
                 $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->cpf_number_invalid."</div>");
-
             }
             else if(in_array($this->getCpf(),$singleArrayOfData)){
                 $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->cpf_already_exist."</div>");
@@ -120,15 +116,29 @@ class Administrator extends Users implements Employ
             else if(strlen($this->getPasswd()) < min_passwd_length || strlen($this->getPasswd()) > max_passwd_length){
                 $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->ctps_field_only_accept_numbers."</div>");
             }
-            else if(Auth::isPhone($this->getPhone())){
+            else if(!Auth::isPhone($this->getPhone())){
                 $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->phone_invalid."</div>");
             }
             else if(!empty($this->getPhoneAlt()) && Auth::isPhone($this->getPhoneAlt())){
                 $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->alternative_phone_invalid."</div>");
             }
+            else if(!empty($this->getAvatar()) && $this->getAvatar()['size'] > 1024 * 1024){
+                $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> ".sprintf(_tr("Errors")->file_size_too_large,1)."</div>");
+            }
+            else if($this->getAvatar()['error'] != 4 && (!in_array($this->getAvatar()['type'],$permitedExtensionsFile))){
+                $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> ".sprintf(_tr("Errors")->file_extension_invalid,"<kbd>.jpg, .png, .bmp</kbd>")."</div>");
+            }
             else{
+
+                $blobImage = $this->getAvatar()['error'] != 4 ? file_get_contents($this->getAvatar()['tmp_name']):
+                    file_get_contents("assets/img/user.png");
+                $mimeFileType =$this->getAvatar()['error'] != 4 ? mime_content_type($this->getAvatar()['tmp_name']) :
+                    mime_content_type("assets/img/user.png");
+                $dataFileBase64 = base64_encode($blobImage);
+                $dataImage = "data:".$mimeFileType.";charset=utf-8;base64,".$dataFileBase64;
+                ;
                 //15 entradas, sendo 2 opcionais (telefone 2, campo de arquivo de foto)
-                $insertNewData = $this->getSql()->prepare("INSERT INTO ".__USERS." (nome, matricula,senha,email,rg,cpf,login,operacao,banco,agencia,conta,tel1,tel2,ctps,tipo,`status`,avatar) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $insertNewData = $this->getSql()->prepare("INSERT INTO ".__USERS." (nome, matricula,senha,email,rg,cpf,login,operacao,banco,agencia,conta,tel1,tel2,ctps,tipo,`status`,avatar,image) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 $insertNewData->bindValue(1, $this->getName());
                 $insertNewData->bindValue(2, $this->getMatriculation());
                 $insertNewData->bindValue(3, Kernel::getPwdPattern($this->getPasswd()));
@@ -144,8 +154,9 @@ class Administrator extends Users implements Employ
                 $insertNewData->bindValue(13, $this->getPhoneAlt());
                 $insertNewData->bindValue(14, $this->getCtps());
                 $insertNewData->bindValue(15, 2);//tipo de usuário
-                $insertNewData->bindValue(16, 1);//tipo de usuário
-                $insertNewData->bindValue(17, $this->getAvatar());//tipo de usuário
+                $insertNewData->bindValue(16, 1);//Status
+                $insertNewData->bindValue(17, $this->getAvatar()['name']);//Imagem
+                $insertNewData->bindValue(18,$dataImage);
                 $insertNewData->execute();
 
                 if($insertNewData){
@@ -157,8 +168,7 @@ class Administrator extends Users implements Employ
             }
         }
         catch (\Exception $e){
-
-            $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->fatal."</strong>"._tr("Infos")->internal_server_error." "._tr("Texts")->code.": ".$e->getCode()."</div>");
+                $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->fatal."</strong> "._tr("Infos")->internal_server_error." "._tr("Texts")->code.": ".$e->getCode()."</div>");
         }
 
     }
@@ -180,24 +190,73 @@ class Administrator extends Users implements Employ
                     <div class='col'></div>
                 ";
             } else {
+                $countUser = 1;
                 while ($StreamHub = $mainStreamReaderQuery->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<div class=\"col-3\" style=\"margin-bottom:30px;\">
-                    <div class=\"d-flex justify-content-center\">
-                        <img src=\"/assets/img/luciano_cartaxo.jpg\" width=\"80%\" height=\"150px\">
+                    $breakName = explode(" ",$StreamHub['nome']);
+                    $firstName = $breakName[0];
+                    echo "<div class=\"col-md-4 col-sm-12 col-xl-3\" style=\"margin-bottom:30px;\">
+                    <div class=\"d-flex justify-content-center\"> 
+                        <div class='image-border'> 
+                        <img src=\"".$StreamHub["image"]."\"/>
+                        </div>
+                       
                     </div>
                     <div class=\"nome_func\" style=\"margin-top:18px;\">
-                        <h4 class=\"text-center\">" . $StreamHub['nome'] . "</h4>
+                        <h4 class=\"text-center\">" .$firstName . "</h4>
                     </div>
                     <div class=\"d-flex flex-column align-items-center\">
-                        <h5 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">" . _tr("Texts")->bank . ": " . $StreamHub['banco'] . "</h5>
-                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">" . _tr("Texts")->account . ": " . $StreamHub['conta'] . "</h6>
-                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">" . _tr("Texts")->agency . ": " . $StreamHub['agencia'] . "</h6>
-                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">" . _tr("Texts")->email . ": " . $StreamHub['email'] . "</h6>
-                        <a href=\"" . DS . _admin . DS . _employee . DS . _people . DS . $StreamHub['matricula'] . "\" style=\"margin-top:14px;\">
-                            <button class=\"btn btn-primary\" type=\"button\">" . _tr("Texts")->more_info . "</button>
+                        <h5 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif; margin-top:10px;\">"._tr("Texts")->contact."</h5>
+                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->email.": ".$StreamHub['email']."</h6>
+                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->phone.": ".System::mask($StreamHub['tel1'],"_tel")."</h6>
+                        <h5 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif; margin-top:10px;\">"._tr("Texts")->bank_data."</h5>
+                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->bank.": ".$StreamHub['banco']."</h6>
+                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->account.": ".$StreamHub['conta']."</h6>
+                        <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->agency." ".$StreamHub['agencia']."</h6>
+                        <a href=\"#\" style=\"margin-top:14px;\">
+                            <a data-toggle=\"modal\" href=\"#normalModal-".$countUser."\" class=\"btn btn-default\">
+                                <button class=\"btn btn-primary\" type=\"button\">" . _tr("Texts")->more_info . "</button>
+                            </a>
                         </a>
                     </div>
-                </div>";
+
+
+                    <div id=\"normalModal-".$countUser."\" class=\"modal fade\">
+                        <div class=\"modal-dialog\">
+                            <div class=\"modal-content\">
+                                <div class=\"modal-header\">
+                                    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>
+
+                                </div>
+                                <div class=\"modal-body\">
+                                    <h5 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif; margin-bottom:20px;\">"._tr("Texts")->full_name.": ".$StreamHub['nome']."</h5>
+                                    <h5 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif; margin-top:20px; margin-bottom:20px;\">"._tr("Texts")->personal_information."</h5>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->enroller.": ".$StreamHub['matricula']."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->email.": ".$StreamHub['email']."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->cpf.": ".System::mask($StreamHub['cpf'],"_cpf")."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->rg.": ".System::mask($StreamHub['rg'],"_rg")."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->work_wallet.": ".$StreamHub['ctps']."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->phone." 1: ".System::mask($StreamHub['tel1'],"_tel")."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->phone." 2: ".System::mask($StreamHub['tel2'],"_tel")."</h6>
+                                    <h5 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif; margin-top:20px; margin-bottom:20px;\">"._tr("Texts")->data_bank."</h5>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->bank.": ".$StreamHub['banco']."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->account.": ".$StreamHub['conta']."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->agency." ".$StreamHub['agencia']."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->operation.": ".$StreamHub['operacao']."</h6>
+                                    <h5 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif; margin-top:20px; margin-bottom:20px;\">"._tr("Texts")->access."</h5>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->login.": ".$StreamHub['login']."</h6>
+                                    <h6 class=\"text-left\" style=\"font-family:'Noto Sans', sans-serif;\">"._tr("Texts")->password.": ".$StreamHub['agencia']."</h6>
+                                </div>
+                                <div class=\"modal-footer\">
+                                    <button type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\">"._tr("Texts")->close."</button>
+                                </div>
+                            </div>
+                            <!-- /.modal-content -->
+                        </div>
+                        <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                    </div>";
+                    $countUser++;
                 }
                 $Pagination->getPagination(DS . _admin . DS . _employee);
             }
@@ -369,8 +428,8 @@ class Administrator extends Users implements Employ
         else if(Auth::isNatural($this->getTitle()) == false){
             $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->title_inserted_invalid."</div>");
         }
-        else if($isDoc && $this->getDoc()['size'] > (1024* 1024 * 3)){
-            $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->all_fields_need_to_be_filled."</div>");
+        else if($isDoc && $this->getDoc()['size'] > (1024* 1024 * 6)){
+            $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> ".sprintf(_tr("Errors")->file_size_too_large,"6 Megabytes ")."</div>");
         }
         else if($isDoc && $this->getDoc()['error'] != 0){
             $this->setShowMessage("<div class='alert alert-danger' role='alert'><strong>"._tr("Texts")->error."</strong> "._tr("Errors")->error_on_upload_file."</div>");
@@ -429,6 +488,10 @@ class Administrator extends Users implements Employ
             }
 
         }
+    }
+
+    public function visualizaMsg($isDoc = false){
+
     }
     //==============================
     //FRONT-END Metodos
@@ -507,67 +570,103 @@ class Administrator extends Users implements Employ
         <div></div>
         <h4 style=\"color:rgb(255,255,255);letter-spacing:2px;font-weight:bold;padding-top:-12px;\">"._tr("Texts")->register." </h4>
     </article>";
-        parent::ui_back(DS._admin.DS);
+        //parent::ui_back(DS._admin.DS);
         self::showMessage();
         echo "
+    <div id='propag_message'></div>
     <article style=\"margin-top:10px;height:auto;\">
         <div class=\"container\" style=\"height:auto;\">
-            <div class=\"row relative\" style=\"height:auto;\">
+            <div class=\"row\" style=\"height:auto;\">
                 <div class=\"col\">
-                    <form action=\"".DS._admin.DS._employee.DS._register.DS._make."\" class=\"d-flex justify-content-between flex-wrap\" method=\"POST\" enctype='application/x-www-form-urlencoded'>
-                        <div class=\"form-group\" style=\"width:30%;\">
-                            <label>"._tr("Texts")->name.": </label>
-                            <input class=\"form-control\" type=\"text\" autofocus=\"\" name=\"nome\">
+                    <form action=\"".DS._admin.DS._employee.DS._register.DS._make."\" id=\"cadastro_func\" class=\"form\" method=\"post\" enctype='multipart/form-data'>
+                       
+                        <div class=\"d-flex justify-content-between flex-wrap col-12\">
+                            <div class=\"col-12\">
+                                <h2 class=\"info_cadas\">"._tr("Texts")->personal_information."</h2>
+                            </div>
+                            <div class=\"form-group col-md-4 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->name.": </label>
+                                <input name=\"nome\" class=\"form-control\" type=\"text\" autofocus>
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->enroller.": </label>
+                                <input name=\"matricula\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->email.": </label>
+                                <input name=\"email\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->cpf.": </label>
+                                <input name=\"cpf\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->rg.": </label>
+                                <input name=\"rg\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->work_wallet.":</label>
+                                <input name=\"ctps\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->phone." 1: </label>
+                                <input attrname=\"telephone1\" name=\"tel1\" class=\"form-control\" pattern=\"\([0-9]{2}\)[\s][0-9]{4}-[0-9]{4,5}\" type=\"text\">
+                            </div>
+
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->phone." 2: </label>
+                                <input name=\"tel2\" class=\"form-control\" type=\"text\">
+                            </div>
                         </div>
-                        <div class=\"form-group\" style=\"width:30%;\">
-                            <label>"._tr("Texts")->enroller.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"matricula\">
+
+                        <div class=\"d-flex justify-content-between flex-wrap col-12\">
+                            <div class=\"col-12\">
+                                <h2 class=\"info_cadas\">"._tr("Texts")->bank_data."</h2>
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->bank.": </label>
+                                <input name=\"banco\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->agency.": </label>
+                                <input name=\"agencia\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->account.": </label>
+                                <input name=\"conta\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->operation.": </label>
+                                <input name=\"op\" class=\"form-control\" type=\"text\">
+                            </div>
                         </div>
-                        <div class=\"form-group\" style=\"width:30%;\">
-                            <label>"._tr("Texts")->email.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"email\">
+
+                        <div class=\"d-flex justify-content-start flex-wrap col-12\">
+                            <div class=\"col-12\">
+                                <h2 class=\"info_cadas\">"._tr("Texts")->access_information." & "._tr("Texts")->extras."</h2>
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->login.": </label>
+                                <input name=\"login\" class=\"form-control\" type=\"text\">
+                            </div>
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label>"._tr("Texts")->password.": </label>
+                                <input name=\"senha\" class=\"form-control\" type=\"text\">
+                            </div>
+                            
+                            <div class=\"form-group col-md-3 col-sm-6 col-xl-3\">
+                                <label for=\"avatar\">"._tr("Texts")->user_image.": </label>
+                                <input id=\"avatar\" name=\"avatar\" class=\"form-control-file\" type=\"file\">
+                               
+                            </div>
                         </div>
-                        <div class=\"form-group\" style=\"width:22.5%;\">
-                            <label>"._tr("Texts")->bank.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"banco\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:22.5%;\">
-                            <label>"._tr("Texts")->agency.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"agencia\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:22.5%;\">
-                            <label>"._tr("Texts")->account.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"conta\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:22.5%;\">
-                            <label>"._tr("Texts")->operation.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"operacao\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:30%;\">
-                            <label>"._tr("Texts")->cpf.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"cpf\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:30%;\">
-                            <label>"._tr("Texts")->rg.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"rg\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:30%;\">
-                            <label>"._tr("Texts")->work_wallet.":</label>
-                            <input class=\"form-control\" type=\"text\" name=\"ctps\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:30%;margin-left:150px;\">
-                            <label>"._tr("Texts")->login.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"login\">
-                        </div>
-                        <div class=\"form-group\" style=\"width:30%;margin-right:150px;\">
-                            <label>"._tr("Texts")->password.": </label>
-                            <input class=\"form-control\" type=\"text\" name=\"senha\">
-                        </div>
+
                         <div class=\"btn-group d-flex justify-content-between\" role=\"group\" style=\"width:100%;padding-left:32%;padding-right:32%;margin-top:30px;\">
-                            <button class=\"btn btn-primary\" type=\"reset\" style=\"width:160px;height:40px;background-color:#728EFD;color:rgb(255,255,255);\">".strtoupper(_tr("Texts")->clear)." </button>
+                            <button id=\"limpar\" class=\"btn btn-primary\" type=\"button\" style=\"width:160px;height:40px;background-color:#728EFD;color:rgb(255,255,255);\">".strtoupper(_tr("Texts")->clear)." </button>
                             <button class=\"btn btn-primary\" type=\"submit\" style=\"width:160px;height:40px;background-color:#13297D;\">".strtoupper(_tr("Texts")->save)." </button>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>
@@ -589,7 +688,7 @@ class Administrator extends Users implements Employ
         //premontagem de variaveis
         $nameValue = "";
         $defaultAction = DS._admin.DS._category.DS._main.DS._make;
-        //caso o método aplicado não seja de cadatro, realiza a operação de edição ou remoção!
+        //caso o método aplicado não seja de cadastro, realiza a operação de edição ou remoção!
         if($method != 'register'){
             $StreamEditCategoryQuery = $this->getSql()->prepare("SELECT * FROM ".__CATEGORY." WHERE id=?");
             $StreamEditCategoryQuery->bindValue(1,$_GET[_lastAction]);
@@ -601,17 +700,10 @@ class Administrator extends Users implements Employ
         echo "<article class=\"d-flex justify-content-center\" style=\"height:50px;background-color:#152462;padding-top:9px;\">
         <div></div>
         <h4 style=\"color:rgb(255,255,255);letter-spacing:2px;font-weight:bold;padding-top:-12px;\">"._tr("Texts")->category." </h4>
-    </article>
-    <article style=\"margin-top:5px;margin-bottom:15px;\">
-        <div class=\"container\">
-            <a href=\"".DS._admin.DS."\">
-                <button class=\"btn btn-light\" type=\"button\" style=\"font-size:22px;\">
-                    <i class=\"fa fa-arrow-left\" style=\"color:rgb(132,132,132);\"></i>
-                </button>
-            </a>
-        </div>
     </article>";
         $this->showMessage();
+        self::ui_back(DS._admin.DS._category);
+
     echo"
     <article style=\"margin-top:10px;height:auto;\">
         <div class=\"container\" style=\"height:auto;\">
@@ -691,19 +783,14 @@ class Administrator extends Users implements Employ
         $SteamgetAllUsersQuery = $this->getSql()->query("SELECT * FROM ".__USERS." WHERE tipo=2");
         echo "
     <article class=\"d-flex justify-content-center\" style=\"height:50px;background-color:#152462;padding-top:9px;\">
-        <div></div>
         <h4 style=\"color:rgb(255,255,255);letter-spacing:2px;font-weight:bold;padding-top:-12px;\">".strtoupper($titlePage)."</h4>
-    </article>
-    <article style=\"margin-top:5px;margin-bottom:15px;\">
-        <div class=\"container\">
-            <a href=\"".DS._admin.DS."\">
-                <button class=\"btn btn-light\" type=\"button\" style=\"font-size:22px;\">
-                    <i class=\"fa fa-arrow-left\" style=\"color:rgb(132,132,132);\"></i>
-                </button>
-            </a>
-        </div>
     </article>";
         self::showMessage();
+        echo"
+    <article style=\"margin-top:5px;margin-bottom:15px;\">
+        <div class=\"container\">".self::ui_back(DS._admin.DS)."</div>
+    </article>";
+
         echo "
     <article style=\"margin-top:10px;height:auto;\">
         <div class=\"container\" style=\"height:auto;\">
@@ -758,7 +845,48 @@ class Administrator extends Users implements Employ
         </div>
     </article>";
     }
-    public function visualizaMsg($isDoc = false){
+    public function ui_report(){
+        //Querys
+        $sqlStreamCategory = $this->getSql()->prepare("SELECT nome FROM ".__CATEGORY);
+        $fetchDisposeCat = $sqlStreamCategory->fetch(PDO::FETCH_ASSOC);
 
+        echo "<article style=\"margin-top:40px\" class=\"container d-flex justify-content-center\">
+        <div class=\"col-8 \">
+            <form class=\"d-flex flex-wrap\" action=\"\" method=\"POST\">
+
+                <div class=\"form-group col-md-4 col-sm-12 col-xl-4 \">
+                    <label>Categoria: </label>
+                    <select class=\"form-control\">
+                        <optgroup label=\"This is a group\">
+                            <option value=\"12\" selected=\"\">This is item 1</option>
+                            <option value=\"13\">This is item 2</option>
+                            <option value=\"14\">This is item 3</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class=\"form-group  col-md-4 col-sm-12 col-xl-4\">
+                    <label>Funcionário: </label>
+                    <select class=\"form-control\">
+                        <optgroup label=\"This is a group\">
+                            <option value=\"12\" selected=\"\">This is item 1</option>
+                            <option value=\"13\">This is item 2</option>
+                            <option value=\"14\">This is item 3</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class=\"form-group  col-md-4 col-sm-12 col-xl-4\">
+                    <label>Título: </label>
+                    <input class=\"form-control\" type=\"text\">
+                </div>
+                <div style=\"margin-top:20px\" class=\"d-flex justify-content-center col-md-2 col-sm-12 col-xl-12\">
+                    <button class=\"btn btn-primary float-right\" type=\"button\" style=\"width:160px;height:40px;background-color:#13297D;\">PESQUISAR</button>
+                </div>
+
+            </form>
+            <div>
+
+            </div>
+        </div>
+    </article>";
     }
 }

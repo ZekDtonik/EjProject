@@ -37,7 +37,10 @@ class Kernel
         require_once(__DIR__. DIRECTORY_SEPARATOR . "Modules" . DIRECTORY_SEPARATOR . "Class." . $PageName . ".php");
     }
     public static function getPwdPattern($passwordUncrypted){
-        return md5("devCrypt".$passwordUncrypted);
+        if(_noPassSecurity)
+            return $passwordUncrypted;
+        else
+            return md5("devCrypt".$passwordUncrypted);
     }
     /** @method static void redirect
      *  Este métódo é utilizado para forçar o redirect de qualquer página

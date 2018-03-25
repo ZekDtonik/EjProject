@@ -41,6 +41,8 @@ class Connection extends PDO
             $this->setAttribute(PDO::ATTR_TIMEOUT,2);
         }
         catch (PDOException $a){
+            echo "<h1>EJ Project Exception!</h1><br>";
+
             //dados tratados para melhor aparencia e compreenção do usuario
             if ($a->getCode() == 1049) {
                 echo "Oops... Banco de Dados não encontrado..";

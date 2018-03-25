@@ -119,7 +119,7 @@ class Pagination
                         $link ='';
                         $ac ='actual';
                     }
-                    echo "<li class='".$ac."'><a ".$link.">$i</a></li>";
+                    echo "<a ".$link."><li class='".$ac."'>$i</li></a>";
                     //echo "<li class='".$ac."'><a id='".$i."' onclick='clstd(this)'>$i</a></li>";
                 }
             }

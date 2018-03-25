@@ -22,6 +22,7 @@
         <rg_field_only_accept_numbers>Campo de R.G aceita apenas caracteres numéricos</rg_field_only_accept_numbers>
         <password_length_must_be_between>Tamanho da senha deve estar entre %s e %s caracteres.</password_length_must_be_between>
         <matriculation_id_already_exist>Este identificador de matrícula já existe.</matriculation_id_already_exist>
+        <matriculation_id_max_length>Tamanho máximo do Identificador de matrícula é de %s caracteres númericos.</matriculation_id_max_length>
         <ctps_field_only_accept_numbers>Campo de CPTS aceita apenas caracteres numéricos.</ctps_field_only_accept_numbers>
         <phone_invalid>Telefone inserido inválido</phone_invalid>
         <alternative_phone_invalid>Telefone alternativo inserido inválido</alternative_phone_invalid>
@@ -37,8 +38,12 @@
         <document_not_annexed>O documento requerido não foi anexado!</document_not_annexed>
         <error_on_upload_file>Erro no upload do arquivo!</error_on_upload_file>
         <category_id_not_found>Categoria não encontrada!</category_id_not_found>
+        <file_size_too_large>Tamanho do arquivo não pode exceder %sMb's</file_size_too_large>
+        <file_extension_invalid>Extensão do arquivo inválido. Apenas arquivos do tipo %s são permitidos.</file_extension_invalid>
+        <duplicate_entry_key>Valores duplicados na tabela %s</duplicate_entry_key>
     </Errors>
     <Texts>
+        <contact>Contato</contact>
         <password>Senha</password>
         <category>Categoria</category>
         <register>Cadastro</register>
@@ -66,6 +71,8 @@
         <account>Conta</account>
         <rg>RG</rg>
         <cpf>CPF</cpf>
+        <phone>Telefone</phone>
+        <logon>Logar</logon>
         <login>Login</login>
         <password>Senha</password>
         <clear>Limpar</clear>
@@ -89,9 +96,19 @@
         <not_categorized>Sem Categoria</not_categorized>
         <download>Baixar</download>
         <description>Descrição</description>
-
+        <personal_information>Informações Pessoais</personal_information>
+        <bank_data>Dados Bancários</bank_data>
+        <access_information>Dados de Acesso</access_information>
+        <user_image>Foto do Usuário</user_image>
+        <extras>Extras</extras>
+        <full_name>Nome Completo</full_name>
+        <close>Fechar</close>
     </Texts>
     <Infos>
+        <insert_a_photo>Insira uma foto</insert_a_photo>
+        <you_not_have_auth_to_access_this_file>Voce não tem autorização para acessar este arquivo!</you_not_have_auth_to_access_this_file>
+        <impossible_to_make_this_action>Impossivel realizar esta operação</impossible_to_make_this_action>
+        <user_not_logged>Voce precisa estar logado para realizar esta operação</user_not_logged>
         <none_employees_registered>Nenhum funcionário cadastrado</none_employees_registered>
         <internal_server_error>Erro interno do servidor.</internal_server_error>
         <success_login>Login realizado com sucesso.</success_login>
@@ -106,5 +123,6 @@
         <error_on_procedure>Erro de execução no procedimento remoto!</error_on_procedure>
         <message_successful_sended>Mensagem enviada com sucesso!</message_successful_sended>
         <use_key_to_select_multiple_employees>Dica: use %s nos nomes dos funcionários para seleção multipla.</use_key_to_select_multiple_employees>
+        <file_not_found>Arquivo não encontrado!</file_not_found>
     </Infos>
 </language>

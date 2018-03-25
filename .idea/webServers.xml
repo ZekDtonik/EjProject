@@ -6,7 +6,10 @@
         <fileTransfer port="0" mountedRoot="W:\WWW\EJProject" accessType="MOUNT" />
       </webServer>
       <webServer id="2a20e8ee-7d33-4111-9441-d0448b683955" name="Sync to NetBook" url="http://www.ejp.com">
-        <fileTransfer port="0" mountedRoot="W:\EJProject" accessType="MOUNT" />
+        <fileTransfer port="0" mountedRoot="D:\C\EJProject" accessType="MOUNT" />
+      </webServer>
+      <webServer id="da2481e4-6555-4b2a-bdfa-d69ba98b9c6c" name="New Versions" url="http://ejp.com">
+        <fileTransfer port="0" mountedRoot="D:\C\EJProject" accessType="MOUNT" />
       </webServer>
     </option>
   </component>

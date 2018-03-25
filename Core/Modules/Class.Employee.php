@@ -14,10 +14,14 @@ use PDO;
 class Employee extends Users implements Employ
 {
     public function visualizaMsg($isDoc = false){
+        parent::ui_back(DS._employee.DS);
         echo "<article style=\"margin-top:80px;\">
-        <div class=\"container\" style=\"height:auto;\">
-            <div class=\"row\" style=\"height:auto;\">";
+        <div class=\"container\" style=\"height:auto;\">";
+
+            echo"<div class=\"row\" style=\"height:auto;\">";
+            
             self::getMessages($isDoc);
+
             echo "</div>
         </div>
     </article>";

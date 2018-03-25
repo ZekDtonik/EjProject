@@ -41,9 +41,9 @@ $authenticate = new Authenticate();
             <!-- MESSAGES PLACE -->
             <div class="messages"><?php $authenticate->showMessages(); ?></div>
             <!-- ==============================  -->
-            <div class="form-group"><input class="form-control" type="text" name="login" required="required" placeholder="Login" autofocus="autofocus"></div>
-            <div class="form-group"><input class="form-control" type="password" required="required" name="senha" placeholder="<?php _tr("Texts")->password ?>"></div>
-            <div class="form-group"><button class="btn btn-primary btn-block" type="submit" style="background-color:rgb(0,81,188);">Logar </button></div></form>
+            <div class="form-group"><input class="form-control" type="text" name="login" required="required" placeholder="<?php echo _tr("Texts")->login ?>" autofocus="autofocus"></div>
+            <div class="form-group"><input class="form-control" type="password" required="required" name="senha" placeholder="<?php echo _tr("Texts")->password ?>"></div>
+            <div class="form-group"><button class="btn btn-primary btn-block" type="submit" style="background-color:rgb(0,81,188);"><?php echo _tr("Texts")->logon ?> </button></div></form>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>

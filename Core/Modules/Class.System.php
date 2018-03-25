@@ -57,7 +57,8 @@ class System
         } elseif ($mask === "_rg") {
             $mask = "##.###.###-##";
         }
-        for ($i = 0; $i <= strlen($mask) - 1; $i++) {
+        for ($i = 0; $i < strlen($mask); $i++) {
+
             if ($mask[$i] == '#') {
                 if (isset($val[$k]))
                     $maskared .= $val[$k++];
@@ -65,8 +66,15 @@ class System
                 if (isset($mask[$i]))
                     $maskared .= $mask[$i];
             }
+
         }
-        return $maskared;
+        if(strlen($val) == 0){
+            return $mask;
+        }
+        else{
+            return $maskared;
+        }
+
     }
 
     public static function money($value)
@@ -904,7 +912,6 @@ class System
             die("<div class='loader'>".upshot::noEdata(_tr(warning),_tr(warning_msie_not_supported.warning_msie_descr),'wrong',"https://www.google.com.br/chrome/browser/desktop/index.html",true)."</div>");
         }
     }
-
 
 
 
