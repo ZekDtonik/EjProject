@@ -1,0 +1,282 @@
+/*  FallBack font, util quando a fonte personalizada não carregou ainda...
+    A estilização usa o documento do bootstrap, que é muito grande, dessa forma
+    é possivel utilizar uma fonte mais facilmente ja que o arquivo styles é menor
+    e mais rapido carregado que o bootstrap
+*/
+*{
+    font-family: "Segoe UI",sans-serif;
+}
+html{
+    height: 100%;
+}
+body{
+    position: relative;
+    min-height: 100%;
+}
+.login-dark {
+    height: 1000px;
+    background: url(../../assets/img/star-sky.jpg) #475d62;
+    background-size: cover;
+    position: relative;
+}
+.login-dark form {
+    max-width: 320px;
+    width: 90%;
+    background-color: #1e2833;
+    padding: 40px;
+    border-radius: 4px;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #fff;
+    box-shadow: 3px 3px 4px rgba(0, 0, 0, .2);
+}
+.login-dark .illustration {
+    text-align: center;
+    padding: 15px 0 20px;
+    font-size: 100px;
+    color: #2980ef;
+}
+.login-dark form .form-control {
+    background: 0 0;
+    border: none;
+    border-bottom: 1px solid #434a52;
+    border-radius: 0;
+    box-shadow: none;
+    outline: 0;
+    color: inherit;
+}
+.login-dark form .btn-primary {
+    background: #214a80;
+    border: none;
+    border-radius: 4px;
+    padding: 11px;
+    box-shadow: none;
+    margin-top: 26px;
+    text-shadow: none;
+    outline: 0;
+}
+.login-dark form .btn-primary:active, .login-dark form .btn-primary:hover {
+    background: #214a80;
+    outline: 0;
+}
+.login-dark form .forgot {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: #6f7a85;
+    opacity: .9;
+    text-decoration: none;
+}
+.login-dark form .forgot:active, .login-dark form .forgot:hover {
+    opacity: 1;
+    text-decoration: none;
+}
+.login-dark form .btn-primary:active {
+    transform: translateY(1px);
+}
+.nome_func:after {
+    content: '';
+    width: 60%;
+    display: block;
+    background: #c8c8c8;
+    height: 2px;
+    margin: 0 auto 5px;
+}
+.navigation-clean {
+    background: #fff;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    color: #333;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    margin-bottom: 0;
+}
+@media (min-width:768px) {
+    .navigation-clean {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+}.navigation-clean .navbar-brand {
+    font-weight: 700;
+    color: inherit;
+}
+.navigation-clean .navbar-brand:hover {
+    color: #222;
+}
+.navigation-clean .navbar-toggler {
+    border-color: #ddd;
+    color: #888;
+}
+.navigation-clean .navbar-toggler:focus, .navigation-clean .navbar-toggler:hover {
+    background: 0 0;
+}
+.navigation-clean .form-inline, .navigation-clean .navbar-collapse {
+    border-top-color: #ddd;
+}
+.navigation-clean.navbar-light .navbar-nav .nav-link.active, .navigation-clean.navbar-light .navbar-nav .nav-link.active:focus, .navigation-clean.navbar-light .navbar-nav .nav-link.active:hover {
+    color: #8f8f8f;
+    box-shadow: none;
+    background: 0 0;
+    pointer-events: none;
+}
+.navigation-clean.navbar .navbar-nav .nav-link {
+    padding-left: 18px;
+    padding-right: 18px;
+}
+.navigation-clean.navbar-light .navbar-nav .nav-link {
+    color: #465765;
+}
+.navigation-clean.navbar-light .navbar-nav .nav-link:focus, .navigation-clean.navbar-light .navbar-nav .nav-link:hover {
+    color: #37434d!important;
+    background-color: transparent;
+}
+.navigation-clean .navbar-nav>li>.dropdown-menu {
+    margin-top: -5px;
+    box-shadow: none;
+    background-color: #fff;
+    border-radius: 2px;
+}
+.navigation-clean .dropdown-menu .dropdown-item, .navigation-clean .dropdown-menu .dropdown-item:focus {
+    line-height: 2;
+    color: #37434d;
+}
+.navigation-clean .dropdown-menu .dropdown-item:focus, .navigation-clean .dropdown-menu .dropdown-item:hover {
+    background: #eee;
+    color: inherit;
+}
+
+.info_cadas {
+    
+    font-size:  1.2em;
+    
+    margin-top:  10px;
+    
+    margin-bottom:  10px;
+    
+    color:  #062735;
+    
+}
+
+.btn, .btn-primary{
+    width: 100%;
+}
+
+input.error{
+    color: red;
+    border: 2px solid red;
+}
+
+
+input.valid{
+    color: green;
+    border: 2px solid green;
+    background: none;
+}
+
+.error{
+    color: red;
+}
+.valid{
+    color: green;
+}
+
+
+@media screen and (max-width:450px){
+    .img_logo{
+        display: none;
+    }
+}
+
+
+.modal.modal-wide .modal-dialog {
+    max-width: 724px;
+  }
+
+  .modal-dialog{
+      max-width: 759px;
+  }
+  .modal-wide .modal-body {
+    overflow-y: auto;
+  }
+.in-center{
+    margin: auto;
+}
+
+.devLogo{
+    position: absolute;
+    background: url("../img/logo_devwolf.png") no-repeat 0 0;
+    display: block;
+    width:162px;
+    height: 29px;
+    right: 0;
+    margin: 8px 35px 0 0;
+
+}
+.copy,.reserve{
+    font-size: 12px;
+    color: #fff;
+}
+body > .main{
+    padding-bottom: 60px;
+}
+body .fix-main{
+    padding-bottom: 100px;
+}
+.ftr{
+    width: 100%;
+    position: absolute;
+    padding: 12px;
+    margin-top:15px ;
+    background: #42596d;
+    height: 60px;
+    bottom: 0;
+}
+.no-fh{
+    user-focus: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+.no-fh:hover{
+    user-focus: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+.bg{
+    background: url('../img/star-sky.jpg') no-repeat 0 30%;
+}
+.dw{
+    font-family: "devWolf Font",sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    font-style: normal !important;
+    text-align: center;
+    position: relative;
+    display: block;
+}
+/* */
+.icon-locked-outline{
+    min-height: 16px;
+    min-width: 16px;
+}
+.icon-locked-outline::before{
+     content: "\e901";
+ }
+.icon-register::before{
+    content: "\e902";
+}
+.icon-report::before{
+    content: "\e903";
+}
+.icon-category::before{
+    content: "\e900";
+}
+.icon-sent::before{
+    content: "\e904";
+}
+.text-blue-strong{
+    color: #2980ef;
+}
+

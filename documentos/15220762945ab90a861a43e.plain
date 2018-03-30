@@ -1,0 +1,5 @@
+openssl genrsa -des3 -out ca.key 2048 # Gera a chave com senha
+openssl rsa -in ssl/ca.key -out ssl/canpw.key #gera a chave sem senha
+openssl req -new -key ssl/ca.key -out ssl/cert.csr -config ssl/o.cnf #cria o request com a chave sem senha
+req -in ssl/certrequest.csr -noout -text #usado para ver o que tem no certificado
+openssl x509 -req -days 3095 -trustout -signkey ssl/ca.key -in ssl/cert.csr -out ssl/cert.crt #cria o arquivo trusted crt sem senha completo wildcard precisa colocar no CN=*.nomesite.extensao, e precisa criar outro e juntar no arquivo pem para o dominio sem o www
