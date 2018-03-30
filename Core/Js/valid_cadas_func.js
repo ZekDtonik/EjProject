@@ -180,7 +180,7 @@ jQuery.validator.addMethod('filesize', function (value, element, param) {
            // form.submit();
 
             $.post({
-                url: "/requisition/Funcionario/Cadastro",
+                url: form.getAttribute("requisition"),
                 data: new FormData($(form)[0]),
                 success: function(data){
                     $("#propag_message").html(data);
@@ -191,6 +191,6 @@ jQuery.validator.addMethod('filesize', function (value, element, param) {
 
             });
             //submit via ajax
-            console.log(new FormData($(form)[0]));
+            //console.log(form.getAttribute("requisition"));
          }
     });

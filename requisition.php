@@ -14,7 +14,16 @@ switch ($_GET[_mainAction]){
             case _register:
                     $Administration->cadastrarFuncionario();
                     break;
+            case _edit:
+                $Administration->cadastrarFuncionario(true);
+                break;
         }
+        break;
+    case _pdf:
+        $Administration->showPdf($_GET[_subAction]);
+        break;
+    case _chvwd:
+        $Administration->checkView($_GET[_subAction]);
         break;
 
 }

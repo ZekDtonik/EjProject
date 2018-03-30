@@ -11,6 +11,14 @@
       <webServer id="da2481e4-6555-4b2a-bdfa-d69ba98b9c6c" name="New Versions" url="http://ejp.com">
         <fileTransfer port="0" mountedRoot="D:\C\EJProject" accessType="MOUNT" />
       </webServer>
+      <webServer id="5255eb2d-573b-45b5-ba66-fe32ecd70604" name="webHost Online" url="http://files.000webhost.com">
+        <fileTransfer host="files.000webhost.com" port="21" rootFolder="/public_html">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

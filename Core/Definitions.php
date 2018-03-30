@@ -8,17 +8,18 @@
 /* DEFINIÇÕES DE CONEXÃO*/
 /* ESTRITAMENTE NAO ALTERE AQUI*/
 /* **RISCO DE EXPLOSÃO CATASTROFICA** SERIO!! */
-define("__TYPE_DB",$typeDb);
-define("__HOST__",$hostName);
-define("__PORT__",$hostPort);
-define("__USER",$userName);
-define("__PSWD",$passwd);
-define("__DBNAME",$dataBaseName);
+define("__TYPE_DB",empty($typeDb) ?'': $typeDb);
+define("__HOST__",empty($hostName) ? '' : $hostName);
+define("__PORT__",empty($hostPort) ? '' : $hostPort);
+define("__USER",empty($userName) ? '' : $userName);
+define("__PSWD",empty($passwd) ? '' : $passwd);
+define("__DBNAME",empty($dataBaseName) ? '' : $dataBaseName);
 /** DEFINIÇÕES DE ENTRADA PADRÃO */
-define("DS",DIRECTORY_SEPARATOR);
+//define("DS",DIRECTORY_SEPARATOR);
+define("DS","/");
 define("__PATH",dirname(__DIR__));
 define("__PATH_LANGUAGE",__PATH.DS."Core".DS."Language".DS);
-define("_SESSION_EXPIRE_TIME",$sessionExpireTime);
+define("_SESSION_EXPIRE_TIME",empty($sessionExpireTime) ? '': $sessionExpireTime);
 /*--------------------------------*/
 define("min_login_length",4);
 define("max_login_length",12);
@@ -30,6 +31,7 @@ define("max_passwd_length",25);
 define("__USERS","users");
 define("__CATEGORY","category");
 define("__MESSAGE","message");
+define("__VIEWS",'views');
 /*--------------------------------*/
 /** NOME DAS SOBREPOSIÇÕES */
 /*--------------------------------*/
@@ -39,6 +41,8 @@ define("__DEFAULT_LOGIN_NAME","authenticate");
 /*------------------------------------------------*/
 /** NOME DE PÁGINAS PADRÃO (NAO ADICIONAR AS BARRAS)*/
 define("_index",DS);
+define("_requisition","requisition");
+define("_settings","Configuracoes");
 define("_admin","Administracao");
 define("_employee","Funcionario");
 define("_category","Categoria");
@@ -58,6 +62,8 @@ define("_main","Principal");
 define("_list","Lista");
 define("_logout","sair");
 define("_download","Baixar");
+define("_pdf","_pdf");
+define("_chvwd","checkViewed");
 /*--------------------------------*/
 /** NOME DAS SESSOES */
 /*--------------------------------*/

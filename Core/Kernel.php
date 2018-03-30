@@ -47,6 +47,7 @@ class Kernel
      * @param utiliza JAVASCRIPT
      */
     public static function redirect($var_place){
+
         echo "<script type='text/javascript'> window.location.href='".$var_place."'</script>";
     }
     public function checkClientStatus(){
@@ -58,6 +59,8 @@ class Kernel
         switch($getPlace){
             //Observando Externos
             case 'index':
+            case 'Installer':
+            case 'inst':
                 Modules\Authenticate::checkSession('out');
                 break;
             //Observando Internos
@@ -81,7 +84,7 @@ class Kernel
             return "Valor de data não inserida";
         }
         else{
-            $date = new DateTime($dateUniversal);
+            $date = new DateTime($dateUniversal,new DateTimeZone("America/Sao_Paulo"));
             $formated = $date->format("d-m-Y - h:i");
             return $formated.'h';
         }

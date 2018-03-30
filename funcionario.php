@@ -16,14 +16,8 @@ $Employee = new Employee();
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo _tr("Titles")->admin;?></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Actor">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans">
-    <link rel="stylesheet" href="/assets/css/styles.min.css">
-    <link rel="stylesheet" href="/assets/css/pagination.css">
+    <title><?php echo _tr("Titles")->employee;?></title>
+    <?php include "Template/header.php";?>
 </head>
 
 <body>
@@ -33,20 +27,14 @@ $Employee = new Employee();
         case _documents:
             switch ($_GET[_subAction]){
                 case _download:
-                    if($_GET[_endAction]){
-
-                    }
-
+                    $Employee->ui_back(DS._employee.DS._documents);
+                    $Employee->setShowMessage($Employee->downloadSystem($_GET[_lastAction]));
+                    $Employee->showMessage();
                     break;
                 default:
                     $Employee->visualizaMsg(true);
                     break;
             }
-
-
-            break;
-        case _messages:
-            $Employee->visualizaMsg();
             break;
         //FUNCIONARIOS
             //página de saida, o link envia para aqui, e o metodo aplica a saida
@@ -54,15 +42,21 @@ $Employee = new Employee();
             //logout (true) Redirecionamento ativo apos remoção de sessão
             Modules\Authenticate::logout(true);
             break;
+        case _settings:
+            if($_GET[_subAction] == _make){
+                $Employee->settings();
+            }
+            $Employee->ui_settings();
+            break;
         default:
+            $Employee->visualizaMsg();
             //padrão de tela inicial.s
             //$Administration->ui_home();
             break;
     }
 
     ?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>
+    <?php include "Template/footer.php";?>
 </body>
 
 </html>

@@ -1,30 +1,20 @@
 <?php
 /**
- * Created by MarxMedia Solutions.
- *    Author: Kevin Marques
- *    Date: 18/03/2016 - 18:47
- *  updated to use in this system
- *    Date: 03/02/2018 - 19:32
+ *    Created by DevWolf.
+ *   Author: Kevin Marques
+ *   Date: 26/03/2018 - 13:10
  */
 
-namespace Classes;
+namespace Modules;
 
-use Modules\Connection;
-use PDO;
-class Pagination
+
+class Pagelist
 {
-
     /*  Sistema de página global do app   */
     private $limit;
     private $StartIn;
     private $MaxLimit;
     private $page;
-    private $filters;
-    private $sql;
-    private function getSql()
-    {
-        return $this->sql;
-    }
     /** Metodo de inicialização de páginação
      * $table = Tabela a ser usada para formação de páginação
      * $column = nome da coluna utilizada para contagem de elementos da tabela
@@ -32,30 +22,13 @@ class Pagination
      * Utilizando quando é uma página de pesquisa com filtros de retorno WHERE por exemplo
      * $js = Sistema inicia ajax para retorno de página sem redirecionamento
      */
-    public function __construct($table, $column, $get, $filter_conditions = '',$limite = null)
+    public function __construct($list, $get ,$limite = null)
     {
-        /*  SQL  */
-        $this->sql = new Connection();
 
-        //
-        $this->filters = base64_encode($filter_conditions);
-        //
-
-        //recupera o numero de valores a ser mostrado na chamada 
-        $this->limit = empty($limite) ? 5 : $limite;
-        /*  Query que faz a chamada especifica da tabela especificada requerida.    */
-        $pagination = $this->getSql()->query("SELECT ".$column." FROM ".$table." ".$filter_conditions);
-        /*  Conta os dados nas colunas  */
-        $dataRowCount = $pagination->rowCount();
-
-        //var_dump($filter_conditions);
-        //var_dump($_SERVER['QUERY_STRING']);
         /*  Instrução utilizada para gerar os valores da páginação (Numero de página)  */
-        $this->MaxLimit = ceil($dataRowCount / $this->limit);
-
+        $this->MaxLimit = ceil(count($list) / $limite);
         /*  Instrução utilizada para indicação de páginas via GET  (Usada nas query) */
         //!empty($get) ? $this->page = $get : $this->page = 1;
-
         if(!empty($get)){
             $this->page = $get;
             if($get == 0 or !is_numeric($get)){
@@ -67,32 +40,33 @@ class Pagination
             else{
                 $this->page = $get;
             }
-
         }
         else{
             $this->page =1;
         }
+        //
 
-        /*  Inicia a partir do valor definido no GET    */
         // (página atual * quantidade por página) - quantidade por página
-        //$this->StartIn = ($this->page * $this->limit) - $this->page;
-        $this->StartIn = ($this->page * $this->limit) -  $this->limit;
-    
+        $this->StartIn = ($this->page * $limite) - $limite < 0 ? 0 : ($this->page * $limite) - $limite ;
+        $finalLimite = count($list) < ($limite * $this->page) ? count($list) : $limite * $this->page;
+        //$finalLimite = $limite * $this->page;
+        //recupera o numero de valores a ser mostrado na chamada
+        $this->limit = empty($limite) ? 5 * $this->page : $finalLimite;
+        /*  Instrução utilizada para gerar os valores da páginação (Numero de página)  */
+        //$this->MaxLimit = ceil(count($list) / $this->limit);
+        /*  Inicia a partir do valor definido no GET    */
+
+        //$this->StartIn = $this->limit - 1 < 0 ? 0 : $this->limit  -1 ;
+
     }
-    protected function getStart()
+    public function getStart()
     {
         return $this->StartIn;
     }
-    protected function getLimit()
+    public function getLimit()
     {
         return $this->limit;
     }
-    /** Esse metodo é obrigatorio para a limitação da chamada do query*/
-    public function getProcessLimit(){
-        $Limit = " LIMIT ".self::getStart().', '.self::getLimit();
-        return $Limit;
-    }
-
     public function getPagination($LinkRdr){
         //Limite de link máximo na pagina
         $maxLinks = 2;
@@ -109,7 +83,7 @@ class Pagination
             echo "<div id='buildPage'><ul>";
             echo "<a class='iconPagination arrowLeft L' ".$linkLess."></a>";
             for($i = $start; $i <= $limit; $i++){
-            //for($i = 1; $i < $this->MaxLimit + 1; $i++){
+                //for($i = 1; $i < $this->MaxLimit + 1; $i++){
                 if($i >= 1 and $i <= $this->MaxLimit){
                     if($i != $this->page){
                         $link = "href='".$LinkRdr."/".$i."/'";

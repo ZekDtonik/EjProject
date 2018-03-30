@@ -127,27 +127,25 @@ class Authenticate
         $_SESSION[sigVar__] = $this->getPostData()['login'];
         $_SESSION[sigTime__] = time() + 60 * _SESSION_EXPIRE_TIME;
         $_SESSION[sigLvl__] = $this->getUserData('tipo');
-        if($this->getUserData('tipo') != 1){
-            $_SESSION[sigEnr__] = $this->getUserData('matricula');
-        }
+        $_SESSION[sigEnr__] = $this->getUserData('matricula');
+        //if($this->getUserData('tipo') != 1){ }
         //detecta, qual o nivel de usuário e redireciona
         if($_SESSION[sigLvl__] == 1){
-            \Kernel::redirect(DS._index.DS._admin);
+            \Kernel::redirect(_index._admin);
         }
         else{
-            \Kernel::redirect(DS._index.DS._employee);
+            \Kernel::redirect(_index._employee);
         }
     }
     public static function logout($redirect = false){
         unset($_SESSION[sigVar__]);
         unset($_SESSION[sigTime__]);
-        if($_SESSION[sigLvl__] != 1){
-            unset($_SESSION[sigEnr__]);
-        }
+        unset($_SESSION[sigEnr__]);
+        //if($_SESSION[sigLvl__] != 1){}
         unset($_SESSION[sigLvl__]);
 
         if($redirect){
-            \Kernel::redirect(DS._index);
+            \Kernel::redirect(_index);
         }
     }
     public static function checkSession($location = 'inner',$filename = null){
@@ -158,9 +156,10 @@ class Authenticate
                     return null;
                     break;
                 default:
-                    \Kernel::redirect(DS._index);
+                    \Kernel::redirect(_index);
                     break;
             }
+
         }
         //se existe sessao, contudo o tempo util expirou...
         else if(isset($_SESSION[sigVar__]) && !Authenticate::checkExpireLogin(true)){
@@ -173,7 +172,7 @@ class Authenticate
                     break;
                 //
                 default:
-                    \Kernel::redirect(_index.DS._expired);
+                    \Kernel::redirect(_index._expired);
                     break;
             }
         }
@@ -192,10 +191,10 @@ class Authenticate
                     //Recupera novamente
                     //verificar posição e alterar conforme nivel do usuário
                     if($_SESSION[sigLvl__] == 1 && $filename == 'funcionario'){
-                        \Kernel::redirect(DS.DS._admin);
+                        \Kernel::redirect(DS._admin);
                     }
                     else if($_SESSION[sigLvl__] != 1 && $filename == 'admin'){
-                        \Kernel::redirect(DS.DS._employee);
+                        \Kernel::redirect(DS._employee);
                     }
 
                     break;
@@ -208,7 +207,7 @@ class Authenticate
         if(time() > @$_SESSION[sigTime__]){
             //sessão expirou return false
             if(!$bool){
-                \Kernel::redirect(_index.DS._expired);
+                \Kernel::redirect(_index._expired);
             }
             else{
                 return false;
@@ -218,5 +217,8 @@ class Authenticate
             $_SESSION[sigTime__] = time() + 60 * _SESSION_EXPIRE_TIME;
             return true;
         }
+    }
+    public static function getSessionEnroller(){
+        return  $_SESSION[sigEnr__];
     }
 }

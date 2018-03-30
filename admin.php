@@ -1,4 +1,3 @@
-
 <?php
 /**
  *    Created by DevWolf.
@@ -17,21 +16,16 @@ $Administration = new Administrator();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo _tr("Titles")->admin;?></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Actor">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Sans">
-    <link rel="stylesheet" href="/assets/css/styles.min.css">
-    <link rel="stylesheet" href="/assets/css/pagination.css">
-    <link rel="stylesheet" href="/assets/css/extras.css">
+    <?php include "Template/header.php";?>
     <noscript><?php \Classes\System::noScript();?></noscript>
     <!-- TODO: css para no script-->
 </head>
 
 <body>
-    <?php
-    $Administration->ui_header();
+<?php $Administration->ui_header();?>
+    <div class="main fix-main">
+        <?php
+
     switch ($_GET[_mainAction]){
         //PARA ENVIAR DOCUMENTOS
         case _send:
@@ -65,8 +59,21 @@ $Administration = new Administrator();
                         }
                         $Administration->ui_register_user();
                         break;
+                    case _edit:
+                        if ($_GET[_lastAction] == _make){
+                            $Administration->cadastrarFuncionario(true);
+                        }
+                        $Administration->ui_edit_user();
+                        break;
+                    case _remove:
+                        if ($_GET[_endAction] == _make){
+                            $Administration->removerFuncionario();
+                        }
+                        $Administration->ui_remove_user();
+                        break;
                     default:
                         $Administration->ui_visualize_employee();
+
                         break;
                 }
             break;
@@ -107,6 +114,12 @@ $Administration = new Administrator();
             //logout (true) Redirecionamento ativo apos remoção de sessão
             Modules\Authenticate::logout(true);
             break;
+        case _settings:
+            if($_GET[_subAction] == _make){
+                $Administration->settings();
+            }
+            $Administration->ui_settings();
+            break;
         default:
             //padrão de tela inicial.s
             $Administration->ui_home();
@@ -114,13 +127,9 @@ $Administration = new Administrator();
     }
 
     ?>
+    </div>
+    <?php include "Template/footer.php";?>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
-    <!--<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/additional-methods.min.js"></script>-->
-    <script src="/Core/Js/main.js"></script>
-    <script src="/Core/Js/valid_cadas_func.js"></script>
 </body>
 
 </html>

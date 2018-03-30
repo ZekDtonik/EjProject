@@ -1,0 +1,600 @@
+<?php
+/**
+ *    Created by DevWolf.
+ *   Author: Kevin Marques
+ *   Date: 27/03/2018 - 20:32
+ */
+ob_start('ob_gzhandler');
+if(!session_start() == PHP_SESSION_ACTIVE){
+    session_name("InstallDevProject");
+    session_start();
+}
+include "Assembly.inc";
+include "Kernel.php";
+include "Definitions.php";
+use \Main\Assembly;
+error_reporting(0);
+class Installer extends Assembly
+{
+    private $session;
+    private $host;
+    private $user;
+    private $passwd;
+    private $database;
+    private $port;
+    private $noSec;
+    private $logfile;
+    private $expireTime;
+    private $admin_user;
+    private $admin_nome;
+    private $admin_email;
+    private $admin_senha;
+    private $admin_resenha;
+    private $message;
+    private $defaultLocal = "/instalacao/";
+
+    public function getSession() { return $this->session; }
+    public function setSession($session): void { $this->session = $session; }
+    public function getDefaultLocal(): string { return $this->defaultLocal; }
+    public static function Title() { echo "Instalação do sistema "; }
+    public function getHost() { return $this->host; }
+    public function setHost($host): void { $this->host = $host; }
+    public function getUser() { return $this->user; }
+    public function setUser($user): void { $this->user = $user; }
+    public function getPasswd() { return $this->passwd; }
+    public function setPasswd($passwd): void { $this->passwd = $passwd; }
+    public function getDatabase() { return $this->database; }
+    public function setDatabase($database): void { $this->database = $database; }
+    public function getPort() { return $this->port; }
+    public function setPort($port): void { $this->port = $port; }
+    public function getNoSec() { return $this->noSec; }
+    public function setNoSec($noSec): void { $this->noSec = $noSec; }
+    public function getLogfile() { return $this->logfile; }
+    public function setLogfile($logfile): void { $this->logfile = $logfile; }
+    public function getExpireTime() { return $this->expireTime; }
+    public function setExpireTime($expireTime): void { $this->expireTime = $expireTime; }
+    public function getAdminUser() { return $this->admin_user; }
+    public function setAdminUser($admin_user): void { $this->admin_user = $admin_user; }
+    public function getAdminNome() { return $this->admin_nome; }
+    public function setAdminNome($admin_nome): void { $this->admin_nome = $admin_nome; }
+    public function getAdminEmail() { return $this->admin_email; }
+    public function setAdminEmail($admin_email): void { $this->admin_email = $admin_email; }
+    public function getAdminSenha() { return $this->admin_senha; }
+    public function setAdminSenha($admin_senha): void { $this->admin_senha = $admin_senha; }
+    public function getAdminResenha() { return $this->admin_resenha; }
+    public function setAdminResenha($admin_resenha): void { $this->admin_resenha = $admin_resenha; }
+    public function getMessage() { return $this->message; }
+    public function setMessage($message): void { $this->message = $message; }
+    public function __construct() {
+        $this->setHost(empty($_POST['host']) ? null : $_POST['host']);
+        $this->setUser(empty($_POST['user']) ? null : $_POST['user']);
+        $this->setPasswd(empty($_POST['pass']) ? null : $_POST['pass']);
+        $this->setDatabase(empty($_POST['db']) ? null : $_POST['db']);
+        $this->setPort(empty($_POST['port']) ? null : $_POST['port']);
+        $this->setExpireTime(empty($_POST['expTime']) ? null : $_POST['expTime']);
+        $this->setNoSec(empty($_POST['passSec']) ? null : $_POST['passSec']);
+        $this->setLogfile(empty($_POST['logFile']) ? null : $_POST['logFile']);
+        $this->setAdminNome(empty($_POST['admin_nome']) ? null : $_POST['admin_nome']);
+        $this->setAdminEmail(empty($_POST['admin_email']) ? null : $_POST['admin_email']);
+        $this->setAdminUser(empty($_POST['admin_user']) ? null : $_POST['admin_user']);
+        $this->setAdminSenha(empty($_POST['admin_pass']) ? null : $_POST['admin_pass']);
+        $this->setAdminResenha(empty($_POST['admin_repass']) ? null : $_POST['admin_repass']);
+        !isset($_SESSION['devset']) ?$_SESSION['devset']=[] : null;
+        !isset($_SESSION['admset']) ?$_SESSION['admset']=[] : null;
+        $this->setSession($_SESSION['devset']);
+    }
+
+    //------------------------------------------//
+    //              *** FRONT-END ***            //
+    //------------------------------------------//
+    public function isShow() { return empty($_POST['sh']) ? false : true; }
+
+    public function showMessage() { echo $this->isShow() ? $this->getMessage() : null; }
+    public function ui_defaultStep() {
+        //Cria uma nova sessão de instalação
+        if (!self::checkGrantInstall())
+            self::grantInstall();
+
+        if(empty($_POST['proceed'])){
+            echo "<article class='p-5'>
+        <h4>Bem-Vindo,</h4>
+        <p class='indent'>Nos passos a seguir voce definirá informações de banco de dados, segurança e
+        configurações de sistema e acesso.
+        </p>
+        <h5>Algumas informações importantes</h5>
+        <p class='indent'>No seu servidor existe um arquivo de configurações localizado em <code>Configs/config.cfg</code>, que é utilizado
+        para definir o comportamento de sistema da sua aplicação, voce pode manipula-lo e alterar as suas propriedade manualmente 
+        ao acessar o sistema de arquivos do seu host ou pelo acesso FTP (necessário realizar upload do arquivo novamente).
+        </p>
+  
+        <p><b>IMPORTANTE!</b> Se o documento for editado de maneira incorreta, removendo parâmetros, o seu sistema
+        poderá apresentar problemas ou parar de funcionar completamente, sendo necessário a reinstalação. O banco de dados não será perdido, mas isso pode te causar
+        transtornos futuros.</p>
+        
+        <p class='mb-0 text-warning'>AVISO: Esta instalação manipula o banco de dados gerando todas as tabelas necessárias para seu funcionamento, 
+        a instalação não pode criar o banco de dados, sendo assim, ele deve previamente existir, entretanto, se as tabelas do banco ja existem, 
+        desmarque a opção abaixo ou o seu banco será completamente <strong class='text-danger'>REDEFINIDO!</strong>. 
+        </p>
+        <form action='".$this->getDefaultLocal()."' enctype='application/x-www-form-urlencoded' method='POST'>
+            <input name='proceed' type='hidden' value='true'/><br/>
+            <div class=\"form-check mb-2 mr-sm-2 mb-sm-0\">
+                <label class=\"form-check-label\">
+                    <input class=\"form-check-input\" name='create_db' checked type=\"checkbox\"> Criar tabelas do banco de dados (se não existir).
+                </label>
+            </div>
+             <br>  
+        <button type='submit' class='in-center btn btn-primary w-25 float-right'>Continuar <i class='fa fa-arrow-right'></i></a>
+        </form>
+       
+        </article><br>";
+        }
+        else{
+            self::controlDefault();
+        }
+    }
+    public function ui_step01() {
+        if (self::checkGrantInstall()) {
+            if (!self::controlStep01()) {
+                $this->showMessage();
+                echo "<article class='p-5'>
+       
+        <h4>Passo 1 - Definição de Hospedagem </h4>
+        <a id='form-area'></a>
+        <form action='/instalacao/Passo-1/' method='post' enctype='application/x-www-form-urlencoded'><br/>
+        <input type='hidden' name='sh' value='true'/>
+        <div class='row d-flex flex-wrap'> 
+             <div class='col col-5'>
+                 <div class=\"input-group mb-3\">
+                    <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-server'></i></span>
+                    <input name='host' type=\"text\" class=\"form-control\" value='" . $this->getHost() . "' placeholder=\"Url da Servidor MySql\" aria-describedby=\"basic-addon1\">
+                </div>
+                <div class=\"input-group mb-3\">
+                    <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-user'></i></span>
+                    <input name='user' type=\"text\" class=\"form-control\" value='" . $this->getUser() . "' placeholder=\"Nome de Usuário\" aria-describedby=\"basic-addon1\">
+                </div>
+                <div class=\"input-group mb-3\">
+                    <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-key'></i></span>
+                    <input name='pass' type=\"text\" class=\"form-control\" value='" . $this->getPasswd() . "' placeholder=\"Senha do Usuário\" aria-describedby=\"basic-addon1\">
+                </div>
+                <div class=\"input-group mb-3\">
+                    <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-database'></i></span>
+                    <input name='db' type=\"text\" class=\"form-control\" value='" . $this->getDatabase() . "' placeholder=\"Nome do Banco de Dados\" aria-describedby=\"basic-addon1\">
+                </div>
+                 <div class=\"input-group mb-3\">
+                    <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-sign-in'></i></span>
+                    <input name='port' type=\"text\" class=\"form-control\" value='" . $this->getPort() . "' placeholder=\"Porta de acesso (ex: 3306)\" aria-describedby=\"basic-addon1\">
+                </div>
+            </div>
+             <div class='col '>
+             <p>Especifique com cautela as informações de acesso ao seu banco de dados. Definições erradas tera a necessidade de reiniciar a instalação.</p>
+             <p>Observe os caracteres maisculos e minusculos dos seus dados. A atribuição de <code>http://</code> ou <code>https://</code> vai de acordo ao seu servidor. Alguns servidores não definem protocolos, deixando o link para o usuário desta forma <code>mysql.server01.com</code> por exemplo.</p>
+             <p>Cuidado ao definir a porta, não confunda a sua porta de acesso remoto <kbd>FTP</kbd> <strong>80</strong>(comumente usada) com a sua porta <kbd>MySql</kbd> <strong>3306</strong> usada na maioria das vezes (não é regra).</p>
+             </div>
+        </div>
+        <br>  
+        <button href='/' type='submit' class='in-center btn btn-primary w-25 float-right'>Próximo Passo <i class='fa fa-arrow-right'></i></button>
+        </form>
+    </article><br> ";
+            } else {
+                header("Location: " . $this->getDefaultLocal() . "Passo-2/#form-area");
+            }
+        } else {
+            header("Location: " . $this->getDefaultLocal());
+        }
+    }
+    public function ui_step02() {
+        if (self::checkGrantInstall()) {
+            if (!self::controlStep02()) {
+                $this->showMessage();
+                echo "<article class='p-5'>
+                    <h4>Passo 2 - Configurações de Segurança </h4>
+                    <a id='form-area'></a>
+                    <form action='" . $this->getDefaultLocal() . "Passo-2/' method='post' enctype='application/x-www-form-urlencoded'><br/>
+                    <input type='hidden' name='sh' value='true'/>
+                    <div class='row d-flex flex-wrap'> 
+                         <div class='col col-5'>
+                             <div class=\"input-group mb-3\">
+                                <label class=\"switch\">
+                                  <input name='passSec' type=\"checkbox\" value='true'>
+                                  <span class=\"slider round\"></span>
+                                </label>
+                                <p class='switch-description'>Habilitar Criptografia de Senha</p>
+                            </div>
+                            <div class=\"input-group mb-3\">
+                                <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-clock-o'></i></span>
+                                <input name='expTime' type=\"text\" class=\"form-control\" value='15' placeholder=\"Tempo Ativo de Sessão\" aria-describedby=\"basic-addon1\">
+                            </div>
+                            <div class=\"input-group mb-3\">
+                                <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-file-text'></i></span>
+                                <input name='logFile' type=\"text\" class=\"form-control\"  value='system_log' placeholder=\"Nome do Arquivo Log\" aria-describedby=\"basic-addon1\">
+                            </div>
+                        </div>
+                         <div class='col '>
+                         <p>Habilitar a <strong>criptografia</strong> aumenta consideravelmente a <u>segurança</u> do sistema, impedindo o acesso direto as informações do usuário. 
+                         Contudo, Este é um sistema básico, fechado de gerência direta, isso indica que voce administrador não poderá visualizarar a senha, apenas sua criptografia nos campos de entrada ou detalhes se esta opção for habilitada.
+                        <p class='text-warning'> LEMBRE-SE: Os campos de senhas não são protegidos de visualização, sendo assim, em áreas de alteração de senha, não possui um campo \"repetir senha\" </p> 
+                         </p>
+                         <p>O tempo de sessão em <strong>MINUTOS</strong> indica o valor de tempo que poderá ficar ocioso ate o sistema te desconectar. O desconecte não força o redirecionamento da página automaticamente. Mas na próxima vez que tentar realizar qualquer operação fora do limite de acesso. Voce será impedido.</p>
+                         
+                         <p>O arquivo de <kbd>log</kbd> salva algumas informações relevantes sobre o funcionamento do sistema. O nome padrão é <code>system_log.log</code>, mas voce pode ao lado, definir um nome de sua preferência. A pasta continuará sendo <code>/log</code> e também não é possivel alterar a extensão do arquivo que será sempre do tipo <kbd>log</kbd>.</p>
+                         </div>
+                    </div>
+                    <br>  
+                    <a href='" . $this->getDefaultLocal() . "Passo-1/#form-area'><button  type='button' class='in-center btn btn-primary w-25 float-left'><i class='fa fa-arrow-left'></i> Voltar</button></a>
+                    <button href='/' type='submit' class='in-center btn btn-primary w-25 float-right'>Próximo Passo <i class='fa fa-arrow-right'></i></button>
+                    </form>
+                </article><br>";
+            } else {
+                header("Location: " . $this->getDefaultLocal() . "Passo-3/#form-area");
+            }
+        } else {
+            header("Location: " . $this->getDefaultLocal());
+        }
+    }
+    public function ui_step03() {
+        if (self::checkGrantInstall()) {
+            if (!self::controlStep03()) {
+                $this->showMessage();
+                echo "<article class='p-5'>
+                <h4>Passo 3 - Definição de Acesso Administrativo </h4>
+                <a id='form-area'></a>
+                <form action='" . $this->getDefaultLocal() . "Passo-3/#form-area' method='post' enctype='application/x-www-form-urlencoded'><br/>
+                <input type='hidden' name='sh' value='true'/>
+                <div class='row d-flex flex-wrap'> 
+                     <div class='col col-5'>
+                         <div class=\"input-group mb-3\">
+                            <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-pencil'></i></span>
+                            <input name='admin_nome' type=\"text\" class=\"form-control\" value='" . $this->getAdminNome() . "' placeholder=\"Nome do Administrador\" aria-describedby=\"basic-addon1\">
+                        </div>
+                        <div class=\"input-group mb-3\">
+                            <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-envelope'></i></span>
+                            <input name='admin_email' type=\"text\" class=\"form-control\" value='" . $this->getAdminEmail() . "' placeholder=\"Email do Administrador\" aria-describedby=\"basic-addon1\">
+                        </div>
+                        <div class=\"input-group mb-3\">
+                            <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-user'></i></span>
+                            <input name='admin_user' type=\"text\" class=\"form-control\" value='" . $this->getAdminUser() . "' placeholder=\"Login do Administrador\" aria-describedby=\"basic-addon1\">
+                        </div>
+                        <div class=\"input-group mb-3\">
+                            <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-key'></i></span>
+                            <input name='admin_pass' type=\"password\" class=\"form-control\" value='" . $this->getAdminSenha() . "' placeholder=\"Senha do Administrador\" aria-describedby=\"basic-addon1\">
+                        </div>
+                        <div class=\"input-group mb-3\">
+                            <span class=\"input-group-addon\" id=\"basic-addon1\"><i class='fa fa-lock'></i></span>
+                            <input name='admin_repass' type=\"password\" class=\"form-control\" value='" . $this->getAdminResenha() . "' placeholder=\"Repita a Senha do Administrador\" aria-describedby=\"basic-addon1\">
+                        </div>
+                    </div>
+                     <div class='col '>
+                     <p> O campo de login não aceita palavras como:<br/> <kbd>admin</kbd> <kbd>adm</kbd> <kbd>administrador</kbd> <kbd>administrator</kbd>.</p>
+                     <p>O Login deve estar entre 4-16 caracteres podendo conter letras, numeros, ponto(.) e/ou traço-baixo(_) </p>
+                     <p>A senha deve estar entre 6-22 caracteres podendo conter letras minúsculas e obrigatoriamente deve conter pelo menos uma letra maiúscula, um número e opcionalmente pode conter símbolos.</p>
+                                       
+                     </div>
+                </div>
+                <br>  
+                <a href='" . $this->getDefaultLocal() . "Passo-2/#form-area'><button  type='button' class='in-center btn btn-primary w-25 float-left'><i class='fa fa-arrow-left'></i> Voltar</button></a>
+                <button type='submit' class='in-center btn btn-primary w-25 float-right'>Finalizar <i class='fa fa-check'></i></button>
+                </form>
+            </article><br>";
+            } else {
+                header("Location: " . $this->getDefaultLocal() . "Final");
+            }
+        } else {
+            header("Location: " . $this->getDefaultLocal());
+        }
+    }
+    public function ui_final() {
+        if (self::checkGrantInstall()) {
+            if (self::controlFinal()) {
+                echo "<article class='p-5'>
+                    <i class='fa fa-check-circle text-center btn-block text-success' style='font-size: 125px'></i>
+                    <h6 class='text-center text-success'>Tudo certo! As suas informações foram salvas e seu arquivo de configuração foi criado com sucesso!
+                    </h6>
+                    <br/>
+                    <h5>Aviso de Segurança</h5>
+                    <p class='indent'>O arquivo de instalação ainda pode ser acessado diretamente após a instalação, causando um falha de segurança grave.
+                    É altamente recomendado remover o arquivo de instalação para evitar maiores problemas futuramente.
+          
+                    </p>
+                    <p>O nome do arquivo de instalação no servidor é <code>install.php</code> ao marcar a opção abaixo o arquivo será movido para <code>/trashbin/install.trash</code></p>
+                    <form action='".$this->getDefaultLocal()."Limpar' method='POST' enctype='application/x-www-form-urlencoded'> 
+                        <div class=\"form-check mb-2 mr-sm-2 mb-sm-0\">
+                           <label class=\"form-check-label\">
+                               <input class=\"form-check-input\" name='clear' value='true' type=\"checkbox\"> Remover arquivo do servidor para aumentar a segurança!
+                           </label>
+                        </div>
+                      
+                        <button type='submit' class='in-center btn btn-primary w-25 float-right'>Ir para o Sistema <i class='fa fa-server'></i></button>                    
+                    </form>
+                            <br>  
+                    
+                </article><br>";
+            } else {
+                echo "<article class='p-5'>
+                    <i class='fa fa-warning text-center btn-block text-danger' style='font-size: 125px'></i>
+                    <h6 class='text-center text-danger'>Oops! Algo de errado aconteceu</h6>
+                    <h5>Erro na instalação</h5>
+                    <br/>
+                    <p class='indent'>Algum problema interno impediu a correta instalação do sistema, verifique as permissões de acesso a arquivos e pastas, o seu arquivo <code>php.ini</code>
+                    ou violação de acesso remoto entre o seu sistema e os <u>Termos de Uso</u> do seu Host. Caso não consiga resolver o problema, contate o suporte. 
+                    </p>
+                   
+                    <a href='/' class='in-center btn btn-primary w-25 float-right'>Reiniciar Instalação <i class='fa fa-undo'></i></a>
+                            <br>  
+                    
+                </article><br>";
+            }
+        } else {
+            self::createLog("Impossivel instalar sistema!",3);
+
+        }
+    }
+    //------------------------------------------//
+    //              *** BACK-END ***            //
+    //------------------------------------------//
+    private function checkGrantInstall() {
+        if (!isset($_SESSION['accept-install']) && !($_SESSION['install-expire-time'] >= time())) {
+            unset($_SESSION['accept-install']);
+            unset($_SESSION['install-expire-time']);
+            return false;
+        } else
+            return true;
+    }
+    private function grantInstall() {
+        $_SESSION['accept-install'] = true;
+        $_SESSION['install-expire-time'] = time() + (60 * 30);
+    }
+    //------------------------------------------//
+    //      *** BACK-END CONTROL BLOCK ***      //
+    //------------------------------------------//
+    private function controlDefault() {
+
+        if ($_POST['create_db']) {
+            $_SESSION['devset']['install-createDatabase'] = true;
+        } else {
+            $_SESSION['devset']['install-createDatabase'] = false;
+        }
+
+        header("Location: ".$this->getDefaultLocal()."Passo-1");
+        return true;
+    }
+    private function controlStep01() {
+        if (empty($this->getUser()) && empty($this->getPasswd()) && empty($this->getHost()) && empty($this->getDatabase()) && empty($this->getPort())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> Todos os campos dos dados de hospedagem devem ser preenchidos.</div>");
+            return false;
+        } else if (!preg_match("/[a-z0-9._\-]+/i", $this->getUser())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> O nome de usuário '" . $this->getUser() . "' não é válido, permitido apenas caracteres e números, ponto(.),underline(_)</div>");
+            return false;
+        } else if (!is_numeric($this->getPort())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> O campo de porta de host aceita apenas números!</div>");
+            return false;
+        } else {
+            //especial para area de desenvolvimento
+            if ($this->getPasswd() == 'no_senha_alsdhnaklçgbvksdçfaui') $this->setPasswd('');
+            //Testa as configurações inseridas
+            $checkServerDbIsActive = false;
+            try {
+                $cn = new PDO("mysql:host=" . $this->getHost() . ";port=" . $this->getPort() . ";dbname=" . $this->getDatabase() . ";charset=utf8", $this->getUser(), $this->getPasswd(), [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3]);
+                $checkServerDbIsActive = true;
+            } catch (PDOException $pdo) {
+                if($pdo->getCode() == 1049){
+                    $checkServerDbIsActive = true;
+                }
+                else{
+                    $checkServerDbIsActive = false;
+                }
+            }
+            if ($checkServerDbIsActive) {
+                //Atribui os valores na sessão
+                //Atribui as informações recebidas do POST para a sessao de instalação
+                $_SESSION['devset']['host'] = $this->getHost();
+                $_SESSION['devset']['username'] = $this->getUser();
+                $_SESSION['devset']['password'] = $this->getPasswd();
+                $_SESSION['devset']['database'] = $this->getDatabase();
+                $_SESSION['devset']['port'] = $this->getPort();
+                $cn =null;
+                return true;
+            } else {
+                $cn =null;
+                $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro Crítico:</strong> Tentativa de conexão não foi estabecida com as configurações de servidor inseridas. Verifique suas anotações.</div>");
+                return false;
+            }
+        }
+    }
+    private function controlStep02() {
+        if (empty($this->getExpireTime()) && empty($this->getLogfile())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> Todos os campos de segurança devem ser preenchidos.</div>");
+            return false;
+        } else if (!preg_match("/[a-z0-9_. ]+/i", $this->getLogfile())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> O nome do arquivo de configuração é inválido.</div>");
+            return false;
+        } else if (!is_numeric($this->getExpireTime())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> O campo de tempo só aceita números.</div>");
+            return false;
+        } else {
+            //Atribui os valores na sessão
+            //Atribui as informações recebidas do POST para a sessao de instalação
+            $_SESSION['devset']['expiretime'] = $this->getExpireTime();
+            $_SESSION['devset']['no_security'] = $this->getNoSec() ? "true" : "false";
+            $_SESSION['devset']['logfile'] = $this->getLogfile();
+            return true;
+        }
+    }
+    private function controlStep03() {
+        if (empty($this->getAdminNome()) && empty($this->getAdminUser()) && empty($this->getAdminSenha()) && empty($this->getAdminResenha())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> Todos os campos dos dados de acesso devem ser preenchidos.</div>");
+            return false;
+        } else if (!preg_match("/[a-z0-9 à-ùá-úâ-ûçãõ.]+/i", $this->getAdminNome())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> O nome inserído não é valido. verifique se possui simbolos ou números. apenas ponto(.) é permitido</div>");
+            return false;
+        } else if (!preg_match("/[a-z0-9_.]+/i", $this->getAdminUser())) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> O login de administrador não é válido, permitido apenas letras e números, ponto(.) e underline(_)</div>");
+            return false;
+        } else if ($this->getAdminUser() == 'admin' || $this->getAdminUser() == 'administrador' || $this->getAdminUser() == 'administrator' || $this->getAdminUser() == 'adm') {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong>Para a sua segurança os nomes [<code>admin, adm, administrador, administrator</code>] não são permitidos</div>");
+            return false;
+        } else if (strlen($this->getAdminUser()) < 4 || strlen($this->getAdminUser()) > 16) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> Login de Administrador deve estar entre <strong>4~16</strong> caracteres.</div>");
+            return false;
+        } else if ($this->getAdminSenha() != $this->getAdminResenha()) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> As senhas inseridas não combinam. Tente novamente.</div>");
+            return false;
+        } else if (strlen($this->getAdminSenha()) < 6 || strlen($this->getAdminSenha()) > 22) {
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> Senha muito Curta, deve estar entre <strong>6~22</strong> caracteres.</div>");
+            return false;
+        } else if(!preg_match("/^.*(?=.*\d)(?=.*[a-z]?)(?=.*[A-Z]+)(?=.*[@$#\.&%]*).*$/",$this->getAdminSenha())){
+            $this->setMessage("<div class='alert alert-danger' role='alert'><i class='fa fa-warning'></i> <strong> Erro:</strong> Senha muito fraca, deve contar letras minusculas e pelo menos uma letra maiuscula e um número, simbolos também são aceitos.</div>");
+            return false;
+        } else {
+            //Atribui os valores na sessão
+            //Atribui as informações recebidas do POST para a sessao de instalação
+            $_SESSION['admset']['install-name'] = $this->getAdminNome();
+            $_SESSION['admset']['install-user'] = $this->getAdminUser();
+            $_SESSION['admset']['install-pass'] = $this->getAdminSenha();
+            $_SESSION['admset']['install-email'] = $this->getAdminEmail();
+            return true;
+        }
+    }
+    private function controlFinal() {
+        if(empty($_SESSION['install-alreadycomplete'])){
+            self::setConfigFile("Configs/config.cfg", $this->getSession());
+            //Instancia uma conexao isolada para salvar no banco das configurações iniciais
+            $host =$_SESSION['devset']['host'];
+            $user =$_SESSION['devset']['username'];
+            $pass =$_SESSION['devset']['password'];
+            $dbase=$_SESSION['devset']['database'];
+            $port =$_SESSION['devset']['port'];
+            try{
+                $password = '';
+                if(!$_SESSION['devset']['install-no_security'])
+                    $password = $_SESSION['admset']['install-pass'];
+                else
+                    $password = Kernel::getPwdPattern($_SESSION['admset']['install-pass']);
+
+                $Cnn = new PDO("mysql:host=" . $host . ";port=" . $port . ";dbname=" . $dbase . ";charset=utf8", $user, $pass, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3]);
+
+                if($_SESSION['devset']['install-createDatabase'] == true){
+                    $bigQuery = "
+            USE `".$dbase."`;
+            DROP TABLE IF EXISTS `category`;
+            CREATE TABLE IF NOT EXISTS `category` (
+              `id` int(11) NOT NULL AUTO_INCREMENT,
+              `nome` varchar(50) DEFAULT NULL,
+              `cor` varchar(50) DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `nome` (`nome`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            
+            DELETE FROM `category`;
+            /*!40000 ALTER TABLE `category` DISABLE KEYS */;
+            /*!40000 ALTER TABLE `category` ENABLE KEYS */;
+           
+            DROP TABLE IF EXISTS `message`;
+            CREATE TABLE IF NOT EXISTS `message` (
+              `id` int(11) NOT NULL AUTO_INCREMENT,
+              `mid` varchar(50) NOT NULL,
+              `titulo` varchar(250) NOT NULL,
+              `lista_matricula` varchar(1000) NOT NULL,
+              `documento` varchar(600) DEFAULT NULL,
+              `datetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              `type` int(1) NOT NULL DEFAULT '0',
+              `mensagem` varchar(20000) DEFAULT NULL,
+              `categoria` varchar(10) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            
+           
+            DELETE FROM `message`;
+            /*!40000 ALTER TABLE `message` DISABLE KEYS */;
+            /*!40000 ALTER TABLE `message` ENABLE KEYS */;
+            
+           
+            DROP TABLE IF EXISTS `users`;
+            CREATE TABLE IF NOT EXISTS `users` (
+              `id` int(11) NOT NULL AUTO_INCREMENT,
+              `matricula` varchar(20) NOT NULL,
+              `nome` varchar(250) NOT NULL,
+              `login` varchar(50) NOT NULL,
+              `email` varchar(150) NOT NULL,
+              `rg` varchar(20) NOT NULL,
+              `cpf` varchar(20) NOT NULL,
+              `conta` varchar(20) NOT NULL,
+              `senha` varchar(60) NOT NULL,
+              `status` int(1) NOT NULL,
+              `tipo` tinyint(1) NOT NULL DEFAULT '0',
+              `banco` varchar(80) NOT NULL,
+              `agencia` varchar(80) NOT NULL,
+              `operacao` varchar(80) NOT NULL,
+              `ctps` int(11) NOT NULL,
+              `tel1` varchar(20) DEFAULT NULL,
+              `tel2` varchar(20) DEFAULT NULL,
+              `avatar` varchar(90) DEFAULT NULL,
+              `image` longtext,
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `email` (`email`),
+              UNIQUE KEY `matricula` (`matricula`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+            
+           
+            DELETE FROM `users`;
+            /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+            /*!40000 ALTER TABLE `users` ENABLE KEYS */;
+            
+           
+            DROP TABLE IF EXISTS `views`;
+            CREATE TABLE IF NOT EXISTS `views` (
+              `id` int(11) NOT NULL AUTO_INCREMENT,
+              `mid_ref` varchar(50) NOT NULL,
+              `matricula` int(10) NOT NULL,
+              `download` int(1) NOT NULL DEFAULT '0',
+              `dateViewed` datetime DEFAULT NULL,
+              `dateDownload` datetime DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+                        
+            DELETE FROM `views`;
+            /*!40000 ALTER TABLE `views` DISABLE KEYS */;
+            /*!40000 ALTER TABLE `views` ENABLE KEYS */;";
+
+                    $Cnn->query($bigQuery);
+                }
+
+
+                $insertAdminData = $Cnn->prepare("INSERT INTO ".__USERS." (matricula, login, senha, nome, email, tipo,`status`) VALUES (?,?,?,?,?,?,?)");
+                $insertAdminData->bindValue(1,0);
+                $insertAdminData->bindValue(2,$_SESSION['admset']['install-user']);
+                $insertAdminData->bindValue(3,$password);
+                $insertAdminData->bindValue(4,$_SESSION['admset']['install-name']);
+                $insertAdminData->bindValue(5,$_SESSION['admset']['install-email']);
+                $insertAdminData->bindValue(6,1);
+                $insertAdminData->bindValue(7,2);
+                $insertAdminData->execute();
+
+                self::createLog("Instalação do sistema Completo!",1);
+                return true;
+            }
+            catch (PDOException $pdoNf){
+                //var_dump($pdoNf->getMessage());
+                Assembly::createLog($pdoNf->getMessage(),3);
+                return false;
+            }
+        }
+        else{
+            return true;
+        }
+
+    }
+    public function clearAll(){
+        if($_POST['clear']){
+
+            if(!is_dir("trashbin"))
+                mkdir("trashbin",0777,true);
+            rename("install.php","trashbin/install.trash");
+        }
+        unset($_SESSION['devset']);
+        unset($_SESSION['admset']);
+        header("Location: /");
+        ob_end_flush();
+    }
+}
+
+?>

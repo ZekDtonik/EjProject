@@ -6,6 +6,7 @@
         <home>Página Inicial</home>
         <category>Categorias</category>
         <admin>Administração</admin>
+        <employee>Funcionário</employee>
     </Titles>
     <Errors>
         <all_fields_need_to_be_filled>Todos os campos devem ser preenchidos!</all_fields_need_to_be_filled>
@@ -41,6 +42,10 @@
         <file_size_too_large>Tamanho do arquivo não pode exceder %sMb's</file_size_too_large>
         <file_extension_invalid>Extensão do arquivo inválido. Apenas arquivos do tipo %s são permitidos.</file_extension_invalid>
         <duplicate_entry_key>Valores duplicados na tabela %s</duplicate_entry_key>
+        <none_users_selected>Nenhum funcionário selecionado</none_users_selected>
+        <user_data_not_found>Token necessário do usuário não encontrado!</user_data_not_found>
+        <user_not_found>Funcionário não encontrado!</user_not_found>
+        <employee_enroller_not_found>Funcionário com a matrícula especificada não existe!</employee_enroller_not_found>
     </Errors>
     <Texts>
         <contact>Contato</contact>
@@ -75,8 +80,12 @@
         <logon>Logar</logon>
         <login>Login</login>
         <password>Senha</password>
+        <repeat_password>Repita a Senha</repeat_password>
+        <settings>Configurações</settings>
         <clear>Limpar</clear>
         <save>Salvar</save>
+        <save_changes>Salvar Mudanças</save_changes>
+        <not_editable>Não editável</not_editable>
         <delete>Apagar</delete>
         <bank>Banco</bank>
         <agency>Agência</agency>
@@ -95,6 +104,7 @@
         <not_listed>Não listado</not_listed>
         <not_categorized>Sem Categoria</not_categorized>
         <download>Baixar</download>
+        <downloaded>Baixado</downloaded>
         <description>Descrição</description>
         <personal_information>Informações Pessoais</personal_information>
         <bank_data>Dados Bancários</bank_data>
@@ -103,8 +113,22 @@
         <extras>Extras</extras>
         <full_name>Nome Completo</full_name>
         <close>Fechar</close>
+        <search>Pesquisar</search>
+        <not_found>Nada foi Encontrado!</not_found>
+        <none_results_found>Nenhum resultado foi encontrado!</none_results_found>
+        <not_have_users>Nenhum funcionarios cadastrados</not_have_users>
+        <common_message>Mensagem padrão</common_message>
+        <nothing_to_show>Nada há mostrar</nothing_to_show>
+        <not_visualized>Não Visualizado</not_visualized>
+        <visualize>Visualizar</visualize>
+        <visualized_message>Mensagem Visualizada</visualized_message>
+        <edit_user>Editar Usuário</edit_user>
+        <times>vez(es)</times>
+        <not_downloaded_yet>Não Baixado</not_downloaded_yet>
+        <remove_employee>Remover Funcionário</remove_employee>
     </Texts>
     <Infos>
+        <user_data_successful_edited>Dados do usuário alterados com sucesso!</user_data_successful_edited>
         <insert_a_photo>Insira uma foto</insert_a_photo>
         <you_not_have_auth_to_access_this_file>Voce não tem autorização para acessar este arquivo!</you_not_have_auth_to_access_this_file>
         <impossible_to_make_this_action>Impossivel realizar esta operação</impossible_to_make_this_action>
@@ -124,5 +148,16 @@
         <message_successful_sended>Mensagem enviada com sucesso!</message_successful_sended>
         <use_key_to_select_multiple_employees>Dica: use %s nos nomes dos funcionários para seleção multipla.</use_key_to_select_multiple_employees>
         <file_not_found>Arquivo não encontrado!</file_not_found>
+        <not_found_with_selected_filters>Nada foi encontrado com os filtros selecionados</not_found_with_selected_filters>
+        <try_new_combo_filters>Tente uma outra combinação de filtros para a sua pesquisa</try_new_combo_filters>
+        <none_download_message_to_show>Nenhuma mensagem com documento para download foi enviado para voce!</none_download_message_to_show>
+        <none_message_to_show>Nenhuma mensagem foi enviado para voce!</none_message_to_show>
+        <try_reload_page_to_upate>Caso tenha recebido uma notificação que existe um documento e/ou mensagem para voce, aguarde um ou dois minutos e recarregue a página apertando <kdb>F5</kdb> para atualizar.</try_reload_page_to_upate>
+        <none_document_annex>Nenhum documento anexo a esta mensagem!</none_document_annex>
+        <browser_doesnt_support_pdf_download_it>O seu navegador não suporta arquivos PDF, Tente baixar o arquivo para visualiza-lo </browser_doesnt_support_pdf_download_it>
+        <employee_will_be_perm_removed>O funcionário %s será removido do banco de dados, juntamente com todas as suas mensagens!</employee_will_be_perm_removed>
+        <employee_successful_removed>Funcionário removido com sucesso!</employee_successful_removed>
+        <this_action_cannot_be_undone>Esta ação é permanente e não pode ser desfeita</this_action_cannot_be_undone>
+        <you_is_right_about_this_action>Tem certeza que deseja realizar esta ação?</you_is_right_about_this_action>
     </Infos>
 </language>

@@ -256,6 +256,9 @@ body .fix-main{
     position: relative;
     display: block;
 }
+.btn{
+    cursor: pointer;
+}
 /* */
 .icon-locked-outline{
     min-height: 16px;

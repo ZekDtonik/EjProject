@@ -11,6 +11,14 @@ $WorkPlace = $_SERVER["SERVER_ADDR"];
 //
 $SystemData = [];
 include "Core/Assembly.inc";
+//Checa se o sistema esta instalado
+if(!\Main\Assembly::checkInstalled()){
+    if(file_exists("install.php"))
+        header("Location: /instalacao/");
+    else
+        include ("Template/bad_system.php");
+    exit();
+}
 $Assembly = new Main\Assembly();
 
 //Tempo padrão para sair do sistema
@@ -23,6 +31,7 @@ $typeDb = $Assembly::cfg("typedb");//Padrão de utilização de MySql
 /** @param As definições são aplicadas baseado no ip do servidor, assim facilita a modificação
  *
  */
+
 switch ($WorkPlace){
     /** AMBIENTE DE DESENVOLVIMENTO */
     case "127.0.0.1":
@@ -39,15 +48,14 @@ switch ($WorkPlace){
      * -- ALTERAAR AS DEFINIÇÕES AQUI */
     default:
         //INFORMAÇÕES DE BANCO DE DADOS!
-        $userName = $Assembly::cfg("username");
-        $passwd = $Assembly::cfg("password");
-        $dataBaseName = $Assembly::cfg("database");
-        $hostName = $Assembly::cfg("hostname");
-        $hostPort = $Assembly::cfg("port");//ATENÇÃO: APLICAÇÃO DE PORTA INCORRETA, ACARRETA EM TRAVAMENTO DO SERVIDOR
+        $userName = $Assembly->getCfg("username");
+        $passwd =  $Assembly->getCfg("password");
+        $dataBaseName =  $Assembly->getCfg("database");
+        $hostName =  $Assembly->getCfg("host");
+        $hostPort =  $Assembly->getCfg("port");//ATENÇÃO: APLICAÇÃO DE PORTA INCORRETA, ACARRETA EM TRAVAMENTO DO SERVIDOR
         //SEM RESPOSTA OU RETORNO PARA O USUÁRIO
         break;
 }
-
 //EXTENÇÕES ACEITAS PARA ENVIO DE ARQUIVOS
 $docPattern = array("image/jpeg","image/png","image/jpg","image/bmp","application/msword","application/pdf","application/zip","text/plain","application/vnd.openxmlformats-officedocument.wordprocessingml.document","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet","application/excel");
 define("default_document_patten",$docPattern);
